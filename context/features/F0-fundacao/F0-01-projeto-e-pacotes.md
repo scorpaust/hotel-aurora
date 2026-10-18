@@ -1,5 +1,5 @@
 # F0-01 — Projeto, pacotes e assemblies
-**Estado:** REVIEW · **Depende de:** — · **Assemblies:** todos (criação)
+**Estado:** DONE · **Depende de:** — · **Assemblies:** todos (criação)
 
 ## Objetivo
 Deixar o projeto Unity 6000.6.x configurado com a stack de `codespec.md` §3, a estrutura de pastas de §4 e os assembly definitions com dependências corretas.
@@ -35,5 +35,6 @@ Nenhum. É a fundação.
 
 ## Registo
 - 2026-10-18 — Implementação em `feature/f0-01-projeto-e-pacotes`: pacotes (Cinemachine 3, Localization, Addressables, Newtonsoft JSON) adicionados via Package Manager; estrutura `Assets/_Project/...` e `Assets/Tests/...` criada com `.gitkeep` nas pastas vazias; 13 `.asmdef` criados com o grafo de dependências de `codespec.md` §4; `Aurora.Editor.ProjectValidator` + `ProjectValidatorTests` escritos e a passar; Project Settings (Color Space Linear já estava certo; Enter Play Mode Options a desativar Domain Reload e Scene Reload; Company/Product/Version); `.gitattributes` com filtros LFS restaurados. Estado passa a REVIEW — falta confirmação de batchmode e do Dinis.
+- 2026-10-18 — Dinis aprovou. Merge (fast-forward) para `main`, branch apagada. Estado passa a DONE. Ressalvas que ficam para a próxima feature que tocar nestes assemblies: confirmar compilação em batchmode com o Editor fechado; confirmar que uma referência circular (ex. Gameplay↔UI) dá erro, quando houver scripts reais nesses assemblies.
 
 ## Ideias

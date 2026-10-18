@@ -33,3 +33,4 @@ Bosses que perseguem pelos corredores; o hotel a desfazer-se atrás do Tomás; a
 ## Registo
 
 ## Ideias
+- Arte de armadilhas/obstáculos interativos (picos, lâminas, prateleiras a cair, etc.): o Haunted Hotel Asset Pack não tem nada reaproveitável para isto — decidido em F1-08 (2026-10-18) adiar para aqui. Preparar um brief para o Unity AI Assistant (mesmo estilo/técnica usada em F1-07 para o Tomás e os inimigos: paleta e contorno consistentes, pivot/baseline alinhado, slicing com margem transparente) quando esta feature arrancar.

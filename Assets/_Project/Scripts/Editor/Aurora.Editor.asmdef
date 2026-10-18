@@ -1,7 +1,9 @@
 {
     "name": "Aurora.Editor",
     "rootNamespace": "Aurora.Editor",
-    "references": [],
+    "references": [
+        "Unity.2D.Sprite.Editor"
+    ],
     "includePlatforms": [
         "Editor"
     ],

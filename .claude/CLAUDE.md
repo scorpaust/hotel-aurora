@@ -1,6 +1,6 @@
 # Hotel Aurora — O Último Hóspede
 
-Jogo 2D narrativo de terror/aventura (vista lateral) em Unity 6.3 LTS, para **Web (WebGL2)** e **PC (Windows, depois Steam)**.
+Jogo 2D narrativo de terror/aventura (vista lateral) em Unity 6000.6.x, para **Web (WebGL2)** e **PC (Windows, depois Steam)**.
 
 Este ficheiro é só o ponto de entrada. As regras vivem em `context/`, na raiz do projeto.
 

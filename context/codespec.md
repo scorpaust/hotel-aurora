@@ -40,7 +40,7 @@ Defines de compilação:
 
 ## 3. Stack e pacotes
 
-**Editor:** Unity **6.3 LTS (6000.3.x)**. Não subir de versão sem decisão explícita.
+**Editor:** Unity **6000.6.x (6000.6.6f1)**. Não subir de versão sem decisão explícita.
 
 | Pacote | Uso |
 |---|---|

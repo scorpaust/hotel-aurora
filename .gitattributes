@@ -1,0 +1,24 @@
+# Unity source files
+*.cs diff=csharp text
+*.cginc text
+*.shader text
+
+# Unity YAML assets — merge with Unity's smart merge tool when available, normalize line endings
+*.mat merge=unityyamlmerge eol=lf
+*.anim merge=unityyamlmerge eol=lf
+*.unity merge=unityyamlmerge eol=lf
+*.prefab merge=unityyamlmerge eol=lf
+*.physicsMaterial2D merge=unityyamlmerge eol=lf
+*.physicMaterial merge=unityyamlmerge eol=lf
+*.physicMaterial2D merge=unityyamlmerge eol=lf
+*.asset merge=unityyamlmerge eol=lf
+*.meta merge=unityyamlmerge eol=lf
+*.controller merge=unityyamlmerge eol=lf
+
+# Collapse Unity-generated files in diffs
+*.asset linguist-generated
+*.meta linguist-generated
+*.unity linguist-generated
+
+# Note: art/media assets are intentionally NOT versioned in this repo (see .gitignore) —
+# only source code and project/scene config, so no Git LFS filters are configured here.

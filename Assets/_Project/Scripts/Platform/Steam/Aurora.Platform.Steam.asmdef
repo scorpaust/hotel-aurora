@@ -1,0 +1,19 @@
+{
+    "name": "Aurora.Platform.Steam",
+    "rootNamespace": "Aurora.Platform.Steam",
+    "references": [
+        "Aurora.Core",
+        "Aurora.Platform"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "STEAM_BUILD"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

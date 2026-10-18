@@ -1,0 +1,19 @@
+{
+    "name": "Aurora.UI",
+    "rootNamespace": "Aurora.UI",
+    "references": [
+        "Aurora.Core",
+        "Aurora.Input",
+        "Aurora.Narrative",
+        "Aurora.Gameplay"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

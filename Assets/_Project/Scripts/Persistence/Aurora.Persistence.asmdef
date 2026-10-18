@@ -1,0 +1,16 @@
+{
+    "name": "Aurora.Persistence",
+    "rootNamespace": "Aurora.Persistence",
+    "references": [
+        "Aurora.Core"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

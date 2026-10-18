@@ -1,37 +1,38 @@
 # Funcionalidade Atual
 
-<!-- Ver especificação completa em context/features/F0-fundacao/F0-02-input-system.md -->
+<!-- Ver especificação completa em context/features/F1-nucleo/F1-07-assets-personagens-inimigos.md -->
 
-# F0-02 — Input System e action maps
+# F1-07 — Assets base: personagens e inimigos (sprites, animações, Animator Controllers)
 
 ## Estado
 
-Não iniciada
+Em progresso
 
 ## Objetivos
 
-Toda a entrada do jogo passa pelo Input System moderno: um asset Project-wide, classe gerada, `IInputService` como única porta de entrada, deteção de dispositivo ativo.
+Transformar os spritesheets já importados em `Assets/Assets/Sprites/` (Player, Zombie, EyeGuy, Glitcher, Boss — Haunted Hotel Asset Pack, CC0) em Animation Clips e Animator Controllers utilizáveis, com um prefab de pré-visualização por personagem, para que haja algo visual e animado em jogo antes de existir arte final.
 
-- Criar `Assets/_Project/Input/AuroraInput.inputactions` e atribuí-lo como Project-wide Actions.
-- Active Input Handling = Input System Package (New) apenas (já está assim desde a F0-01).
-- Action maps `Gameplay`, `UI`, `Dialogue`, `Cutscene` com as ações e bindings (teclado+rato e gamepad) de `codespec.md` §6.
-- Gerar a classe C# `AuroraInputActions` (namespace `Aurora.Input`).
-- `IInputService` (em `Aurora.Core`) + `InputService` (em `Aurora.Input`): propriedades tipadas por mapa, `SetContext(InputContext ctx)`, `CurrentDevice` + evento `DeviceChanged`.
-- Web: pedir foco do canvas no primeiro clique/tecla; documentar que `Esc` sai do fullscreen no browser.
-- Cena de teste `Tests/Scenes/SCN_InputSandbox` com debug de ação disparada e dispositivo atual (só `AURORA_DEV`).
+- Confirmar/ajustar import settings dos 5 spritesheets (já em Sprite Mode = Multiple, slicing feito: Player 10 frames, Zombie 7, EyeGuy 6, Glitcher 6, Boss 10).
+- Mapear visualmente os frames de cada spritesheet para poses/estados (idle, andar por direção, etc.).
+- Criar Animation Clips (`ANI_<Personagem>_<Estado>`) por personagem.
+- Criar um Animator Controller por personagem com parâmetros mínimos (`Speed`, `IsMoving`, `Direction`) e transições.
+- Criar um prefab de pré-visualização por personagem (`PFB_<Personagem>Preview` — SpriteRenderer + Animator), só para testes.
+- Documentar o mapeamento de frames usado no Registo da feature.
 
-**Não inclui:** UI de rebinding (F4-02), ícones de prompts (F4-02), rumble avançado.
+**Não inclui:** lógica de controlo do jogador (F1-01, já desenhada para placeholder), IA de inimigos (F3+), arte final das personagens nomeadas da história (F5/F6), rigs de ossos (não há PSD com camadas aqui).
 
 ## Critérios de aceitação
 
-- [ ] Nenhuma referência a `UnityEngine.Input` em todo o projeto (validador da F0-01 verde).
-- [ ] Todas as ações têm binding teclado **e** gamepad.
-- [ ] `SetContext(Dialogue)` impede Move de disparar; `SetContext(Gameplay)` repõe.
-- [ ] Ligar um comando a meio altera `CurrentDevice` e dispara `DeviceChanged` uma única vez.
-- [ ] Sandbox funciona no Editor e num build Web de teste.
+- [x] Decisão tomada e registada sobre versionamento dos sprites usados (resolvido: Git LFS).
+- [ ] 5 Animator Controllers criados (Player, Zombie, EyeGuy, Glitcher, Boss), cada um com pelo menos um estado idle e um estado de movimento.
+- [ ] 5 prefabs de pré-visualização, cada um a reproduzir a animação correta ao mudar o parâmetro de movimento no Animator window.
+- [ ] Mapeamento de frames documentado no Registo desta feature.
+- [ ] Nenhum destes assets introduz dependências de gameplay (prefabs sem scripts de `Aurora.Gameplay`/`Aurora.Hotel`).
 
 ## Histórico
 
 <!-- Manter atualizado. Da mais antiga para a mais recente -->
 
-- 2026-10-18 — F0-02 definida como funcionalidade atual, a seguir à F0-01 (DONE). Trabalho ainda não iniciado.
+- 2026-10-18 — F1-07 registada como feature (gap identificado pelo Dinis, não estava no roadmap original).
+- 2026-10-18 — Decisão de versionamento resolvida: asset pack passa a ser trackado via Git LFS.
+- 2026-10-18 — Dinis escolhe priorizar F1-07 antes da F0-02 (não depende dela, só da F0-01 que já está DONE). F1-07 passa a funcionalidade atual, estado "Em progresso". Branch `feature/f1-07-assets-personagens-inimigos` criada a partir de `main`.

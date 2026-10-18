@@ -1,5 +1,5 @@
 # F1-07 — Assets base: personagens e inimigos (sprites, animações, Animator Controllers)
-**Estado:** TODO · **Depende de:** F0-01 · **Assemblies:** Nenhum (conteúdo/arte apenas)
+**Estado:** DOING · **Depende de:** F0-01 · **Assemblies:** Nenhum (conteúdo/arte apenas)
 
 ## Objetivo
 Transformar os spritesheets já importados em `Assets/Assets/Sprites/` (Player, Zombie, EyeGuy, Glitcher, Boss — Haunted Hotel Asset Pack, CC0) em Animation Clips e Animator Controllers utilizáveis, com um prefab de pré-visualização por personagem, para que haja algo visual e animado em jogo antes de existir arte final.

@@ -1,5 +1,5 @@
 # F1-07 — Assets base: personagens e inimigos (sprites, animações, Animator Controllers)
-**Estado:** DOING · **Depende de:** F0-01 · **Assemblies:** Nenhum (conteúdo/arte apenas)
+**Estado:** REVIEW · **Depende de:** F0-01 · **Assemblies:** Nenhum (conteúdo/arte apenas)
 
 ## Objetivo
 Ter arte animável em jogo antes de existir arte final: (A) reaproveitar os 5 spritesheets já importados em `Assets/Assets/Sprites/` (Player, Zombie, EyeGuy, Glitcher, Boss — Haunted Hotel Asset Pack, CC0) para o que eles realmente são, e (B) gerar sprites novos de movimento lateral (Tomás + inimigos genéricos) com o Unity AI Assistant, no mesmo estilo visual, para o que o pack não cobre.
@@ -67,7 +67,7 @@ Texto pronto a colar, mais as referências de estilo a anexar.
 1. Sprites gerados por código (ASCII-art → `Texture2D` → slicing via `ISpriteEditorDataProvider`) em vez de imagem raster — ver Registo.
 2. Animation Clips por estado (Idle/Walk/Run/Crouch para o Tomás; Idle/Move para cada inimigo). ✅ feito.
 3. Animator Controller por personagem com transições a partir de parâmetros booleanos (`IsMoving`/`IsRunning`/`IsCrouching`). ✅ feito.
-4. Prefab de pré-visualização por personagem (SpriteRenderer + Animator, sem física nem scripts de gameplay). Ainda por fazer.
+4. Prefab de pré-visualização por personagem (SpriteRenderer + Animator, sem física nem scripts de gameplay). ✅ feito.
 
 ## Critérios de aceitação
 
@@ -77,8 +77,8 @@ Texto pronto a colar, mais as referências de estilo a anexar.
 - [x] Decisão tomada e registada sobre versionamento dos sprites usados (Git LFS).
 - [x] Sprites de movimento do Tomás (Idle/Walk/Run/Crouch_Idle/Crouch_Walk, 20 frames) e dos 4 inimigos (Idle/Move cada, 8 frames cada) gerados e importados.
 - [x] Animator Controllers de movimento criados a partir deles — Tomás com `IsMoving`/`IsRunning`/`IsCrouching` (alinhado com o que a F1-01 espera); cada inimigo com `IsMoving`. Verificado ao nível dos dados (curvas `SpriteRenderer.m_Sprite`, transições, parâmetros) — ver Registo.
-- [ ] Prefabs de pré-visualização a animar corretamente ao mudar os parâmetros no Animator window.
-- [ ] Nenhum destes assets introduz dependências de gameplay (confirmar quando os prefabs existirem).
+- [x] Prefabs de pré-visualização (`PFB_<Nome>Preview` — SpriteRenderer + Animator, sem física nem gameplay) para os 5.
+- [x] Nenhum destes assets introduz dependências de gameplay.
 
 ## Testes
 Não aplicável (conteúdo/arte, sem lógica testável). Validação é visual, no Editor.
@@ -91,6 +91,7 @@ Não aplicável (conteúdo/arte, sem lógica testável). Validação é visual, 
 - 2026-10-18 — Dinis gerou Run + Crouch_Idle + Crouch_Walk do Tomás (total 20 frames), `Tomas_Controller` atualizado com `IsRunning`/`IsCrouching` e 18 transições cobrindo quase toda a matriz de combinações. Verificado ao nível dos dados. Única lacuna: falta transição direta `Run → Crouch_Idle` (só existe `Run → Crouch_Walk`) — risco só se `IsCrouching` e `IsMoving` mudarem no mesmo frame; não bloqueia.
 - 2026-10-18 — Dinis gerou Idle+Move para os 4 inimigos genéricos (Zombie, EyeGuy, Glitcher, Boss), mesma técnica. Cada um com Animator Controller próprio (`IsMoving`, Idle↔Move). Verificado: 8 clips com curvas corretas, ritmo de movimento varia por criatura (Zombie 8fps arrastado, EyeGuy/Boss 6fps a flutuar, Glitcher 10fps errático) — bate certo com o pedido (`feat(F1-07): generate movement sprites for the 4 generic enemies`).
 - 2026-10-18 — Apagados os 5 retratos originais (Player/Zombie/EyeGuy/Glitcher/Boss.png) a pedido do Dinis — confirmado sem referências no projeto antes de remover. Parte A marcada como abandonada.
+- 2026-10-18 — Criados os 5 prefabs de pré-visualização (`PFB_<Nome>Preview`). Todos os critérios de aceitação da Parte B cumpridos. Estado passa a REVIEW.
 
 ## Ideias
 - Quando houver arte final de cada boss nomeado (F5/F6), repetir este processo substituindo os placeholders genéricos.

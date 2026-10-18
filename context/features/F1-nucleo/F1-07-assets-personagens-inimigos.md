@@ -22,15 +22,8 @@ Nenhum diretamente — isto é preparação técnica/artística. Os cinco sprite
 - Arte final das personagens nomeadas da história (Tomás, Beatriz, Governanta, Chef, Nadador do Fundo, Noivos, Porteiro, Pai) — essa é trabalho de conteúdo em F5/F6, feito quando houver arte própria.
 - Rigs de ossos via 2D Animation/PSD Importer (os spritesheets são sprites simples por frame, não PSD com camadas; não há necessidade de esqueleto para já).
 
-## Nota importante — controlo de versão
-Toda a pasta `Assets/Assets/` (o asset pack, incluindo estes 5 spritesheets) está atualmente **excluída do git** (`.gitignore`), por decisão explícita do Dinis numa sessão anterior ("só código"). Os filtros Git LFS já estão configurados em `.gitattributes` (`rules.md` §7) mas inertes por causa disso.
-
-Isto cria um problema real para esta feature: Animation Clips, Animator Controllers e Prefabs criados aqui vão referenciar os sprites por GUID. Se os `.png`/`.meta` de origem continuarem fora do git, esses assets ficam **partidos** para quem clonar o repositório (incluindo eventuais builds CI/CD) — só funcionam na máquina do Dinis.
-Antes de avançar com a criação dos clips/controllers, é preciso decidir:
-1. Começar a versionar (via LFS, já configurado) pelo menos os sprites efetivamente usados em animações, ou
-2. Manter tudo fora do git por agora e aceitar que estes assets só funcionam localmente até essa decisão mudar.
-
-A opção 1 é a recomendada, dado que o LFS já está pronto para este cenário exato.
+## Nota — controlo de versão (resolvido)
+~~Toda a pasta `Assets/Assets/` estava excluída do git.~~ **Decidido (2026-10-18, Dinis): começar a versionar.** O bloqueio de arte/media foi removido do `.gitignore` e todo o `Assets/Assets/` (30 PNGs + README/licence do pack) está agora versionado via Git LFS (filtros já existiam em `.gitattributes` por `rules.md` §7). Já não há risco de Animation Clips/Animator Controllers/Prefabs ficarem com referências partidas para quem clonar o repositório.
 
 ## Especificação
 1. Rever import settings dos 5 `.png` (compressão, pivot, PPU — já estão a 100 PPU, pivot 0.5/0.5 por sprite individual; confirmar se serve para o tamanho de jogo pretendido).
@@ -41,7 +34,7 @@ A opção 1 é a recomendada, dado que o LFS já está pronto para este cenário
 6. Testar cada Animator Controller na Animation/Animator window e, se fizer sentido, com uma cena de teste simples (reutilizar/ligar com `Tests/Scenes/SCN_InputSandbox` da F0-02, se já existir, para ver o Player preview a reagir ao Move).
 
 ## Critérios de aceitação
-- [ ] Decisão tomada e registada sobre versionamento dos sprites usados (ver nota acima).
+- [x] Decisão tomada e registada sobre versionamento dos sprites usados (ver nota acima).
 - [ ] 5 Animator Controllers criados (Player, Zombie, EyeGuy, Glitcher, Boss), cada um com pelo menos um estado idle e um estado de movimento.
 - [ ] 5 prefabs de pré-visualização, cada um a reproduzir a animação correta ao mudar o parâmetro de movimento no Animator window.
 - [ ] Mapeamento de frames documentado no Registo desta feature (serve de referência para arte final mais tarde).
@@ -51,6 +44,7 @@ A opção 1 é a recomendada, dado que o LFS já está pronto para este cenário
 Não aplicável (conteúdo/arte, sem lógica testável). Validação é visual, no Editor.
 
 ## Registo
+- 2026-10-18 — Dinis decidiu começar a versionar o asset pack. `Assets/Assets/` removido do `.gitignore`; 30 PNGs + README/licence commitados via Git LFS (`feat: start versioning the Haunted Hotel Asset Pack via Git LFS`).
 
 ## Ideias
 - Quando houver arte final de cada boss nomeado (F5/F6), repetir este processo substituindo os placeholders genéricos.

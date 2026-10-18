@@ -1,5 +1,5 @@
 # F0-02 — Input System e action maps
-**Estado:** TODO · **Depende de:** F0-01 · **Assemblies:** Aurora.Input, Aurora.Core
+**Estado:** DOING · **Depende de:** F0-01 · **Assemblies:** Aurora.Input, Aurora.Core
 
 ## Objetivo
 Toda a entrada do jogo passa pelo Input System moderno: um asset Project-wide, classe gerada, `IInputService` como única porta de entrada, deteção de dispositivo ativo.

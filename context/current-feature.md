@@ -6,7 +6,7 @@
 
 ## Estado
 
-Não iniciada
+Em progresso
 
 ## Objetivos
 
@@ -35,3 +35,4 @@ Toda a entrada do jogo passa pelo Input System moderno: um asset Project-wide, c
 <!-- Manter atualizado. Da mais antiga para a mais recente -->
 
 - 2026-10-18 — F0-02 definida como funcionalidade atual, a seguir à F0-01 (DONE). Trabalho ainda não iniciado.
+- 2026-10-18 — Dinis pede movimento a sério no sandbox da F1-08 em vez de atalho; escolhe fazer a F0-02 como deve ser primeiro. Branch `feature/f0-02-input-system` criada a partir de `main` (independente de F1-07/F1-08, que só dependem de F0-01).

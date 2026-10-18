@@ -16,10 +16,7 @@ Depois de corrigir o slicing (ver Registo), inspecionei os 46 frames ampliados (
 Conclusão: este pack dá arte de retrato/revelação, não de movimento no mundo. A F1-01 já está desenhada para usar placeholder no controlo do Tomás, por isso isto não bloqueia nada — mas construir "Animator Controller com Idle+Andar por direção" a partir destes frames, como esta feature previa inicialmente, não fazia sentido com o conteúdo real.
 
 ## Âmbito
-**Inclui — Parte A (arte existente, pode avançar já):**
-- Animator Controllers de "retrato vivo" para os 5 personagens (loop subtil entre os frames quase-duplicados — piscar/respirar — útil em diálogo).
-- Protótipo da animação de revelação do Boss (contorno → sombreado) como referência para a F1-04 (lanterna/camada do passado).
-- Prefabs de pré-visualização (`PFB_<Personagem>Preview` — SpriteRenderer + Animator) para os 5.
+**Parte A — abandonada (2026-10-18):** os 5 retratos originais (Player/Zombie/EyeGuy/Glitcher/Boss.png) foram apagados do projeto a pedido do Dinis, depois de a Parte B ter corrido bem — não vamos construir Animator Controllers de retrato nem o protótipo de revelação do Boss a partir deles. Se precisarmos de retrato de diálogo ou da animação de revelação da lanterna mais tarde, é trabalho novo (arte nova ou os sprites gerados na Parte B), não retomar isto.
 
 **Inclui — Parte B (arte nova, gerada pelo Dinis com o Unity AI Assistant):**
 - Sprites de movimento lateral do Tomás: Idle, Walk, Run, Crouch (parado e a mover) — ver brief completo abaixo.
@@ -36,7 +33,7 @@ Conclusão: este pack dá arte de retrato/revelação, não de movimento no mund
 
 Texto pronto a colar, mais as referências de estilo a anexar.
 
-**Referências de estilo a anexar:** `Assets/Assets/Sprites/Player.png` (paleta do Tomás) e `Assets/Assets/Sprites/Boss.png` (estética geral do pack).
+**Referências de estilo a anexar:** ~~`Assets/Assets/Sprites/Player.png` e `Boss.png`~~ (apagados, ver Registo) — usar agora `Assets/Assets/Sprites/Tomas.png` e `Boss_Sheet.png` como referência de estilo para arte adicional.
 
 > Preciso de sprites de personagem em pixel art, no mesmo estilo visual das imagens em anexo: paleta escura e pouco saturada (cinzentos e roxos/violetas, quase sem cor viva), contorno preto grosso de 1px à volta de toda a silhueta, sombreado simples com alguma textura granulada. Estética decrépita/assombrada (Haunted Hotel Asset Pack).
 >
@@ -66,32 +63,22 @@ Texto pronto a colar, mais as referências de estilo a anexar.
 
 ## Especificação
 
-**Parte A (arte existente):**
-1. Animation Clip de "retrato vivo" por personagem (loop idle subtil), `Assets/_Project/Art/Characters/<Personagem>/`.
-2. Animator Controller por personagem com esse estado (sem lógica de código associada — liga-se quando o diálogo/UI tiver o seu próprio sistema, fora desta feature).
-3. Para o Boss: Animation Clip adicional da sequência de revelação (contorno → sombreado), separada do loop idle — é protótipo para a F1-04, não produto final.
-4. Prefab de pré-visualização por personagem, só com SpriteRenderer + Animator (sem física, sem scripts de gameplay).
-5. Testar cada Animator Controller na Animation/Animator window.
-
-**Parte B (arte nova, após o Dinis gerar com o AI Assistant):**
-6. Rever/ajustar import settings dos sprites novos (slicing com margem transparente entre poses — ver regra no brief; pivot consistente; PPU a condizer com o resto do projeto).
-7. Animation Clips por estado (Idle/Walk/Run/Crouch para o Tomás; Idle/Move para cada inimigo).
-8. Animator Controller por personagem com parâmetros mínimos (`Speed`, `IsRunning`, `IsCrouching` — já alinhados com os que a F1-01 espera) e transições.
-9. Prefab de pré-visualização por personagem.
+**Parte B (arte nova, gerada pelo Dinis com o AI Assistant):**
+1. Sprites gerados por código (ASCII-art → `Texture2D` → slicing via `ISpriteEditorDataProvider`) em vez de imagem raster — ver Registo.
+2. Animation Clips por estado (Idle/Walk/Run/Crouch para o Tomás; Idle/Move para cada inimigo). ✅ feito.
+3. Animator Controller por personagem com transições a partir de parâmetros booleanos (`IsMoving`/`IsRunning`/`IsCrouching`). ✅ feito.
+4. Prefab de pré-visualização por personagem (SpriteRenderer + Animator, sem física nem scripts de gameplay). Ainda por fazer.
 
 ## Critérios de aceitação
 
-**Parte A:**
-- [x] Decisão tomada e registada sobre versionamento dos sprites usados (ver nota acima).
-- [ ] 5 Animator Controllers de retrato (Player, Zombie, EyeGuy, Glitcher, Boss), cada um com um loop idle a funcionar.
-- [ ] Protótipo da sequência de revelação do Boss, separado do loop idle.
-- [ ] 5 prefabs de pré-visualização.
-- [ ] Nenhum destes assets introduz dependências de gameplay (prefabs sem scripts de `Aurora.Gameplay`/`Aurora.Hotel`).
+**Parte A:** abandonada — sem critérios a cumprir (ver Âmbito).
 
-**Parte B (bloqueado em: Dinis gerar os sprites):**
-- [ ] Sprites de movimento do Tomás e dos 4 inimigos gerados e importados.
-- [ ] Animator Controllers de movimento criados a partir deles, com os parâmetros que a F1-01 espera.
-- [ ] Prefabs de pré-visualização a animar corretamente ao mudar `Speed`/`IsRunning`/`IsCrouching` no Animator window.
+**Parte B:**
+- [x] Decisão tomada e registada sobre versionamento dos sprites usados (Git LFS).
+- [x] Sprites de movimento do Tomás (Idle/Walk/Run/Crouch_Idle/Crouch_Walk, 20 frames) e dos 4 inimigos (Idle/Move cada, 8 frames cada) gerados e importados.
+- [x] Animator Controllers de movimento criados a partir deles — Tomás com `IsMoving`/`IsRunning`/`IsCrouching` (alinhado com o que a F1-01 espera); cada inimigo com `IsMoving`. Verificado ao nível dos dados (curvas `SpriteRenderer.m_Sprite`, transições, parâmetros) — ver Registo.
+- [ ] Prefabs de pré-visualização a animar corretamente ao mudar os parâmetros no Animator window.
+- [ ] Nenhum destes assets introduz dependências de gameplay (confirmar quando os prefabs existirem).
 
 ## Testes
 Não aplicável (conteúdo/arte, sem lógica testável). Validação é visual, no Editor.
@@ -100,6 +87,10 @@ Não aplicável (conteúdo/arte, sem lógica testável). Validação é visual, 
 - 2026-10-18 — Dinis decidiu começar a versionar o asset pack. `Assets/Assets/` removido do `.gitignore`; 30 PNGs + README/licence commitados via Git LFS (`feat: start versioning the Haunted Hotel Asset Pack via Git LFS`).
 - 2026-10-18 — Extraídos os 39 frames originais para inspeção visual (folha de contacto em artifact). Dinis confirmou que Player_4/5 (3 poses cada), Zombie_0/5 (2 poses cada) e Boss_3 (2 poses) estavam fundidos por slicing automático do Unity. Corrigido recortando pelos pontos reais (mínimo local de pixels opacos por linha, via `UnityEditor.U2D.Sprites.ISpriteEditorDataProvider` — a API clássica `TextureImporter.spritesheet` não persiste nesta versão do Unity). Total passou de 39 para 46 frames (`fix(F1-07): re-slice merged sprite frames`).
 - 2026-10-18 — Inspeção visual ampliada (nearest-neighbor 10x) dos 46 frames revelou que o pack é de retrato/ícone, não de movimento — ver secção "Descoberta importante" acima. Âmbito da feature dividido em Parte A (retratos, com a arte existente) e Parte B (sprites de movimento, a gerar pelo Dinis com o Unity AI Assistant a partir do brief nesta página).
+- 2026-10-18 — Dinis gerou o Tomás (Idle×2, Walk×6) com o AI Assistant, via geração por código (ASCII-art em `TomasFrameData.cs` → `Texture2D` → slicing em `TomasSpriteGenerator.cs`, mesma API `ISpriteEditorDataProvider`). Verificado: compila limpo, curvas `SpriteRenderer.m_Sprite` corretas, `Tomas_Controller` com `IsMoving` e transições Idle↔Walk (`feat(F1-07): generate Tomas movement sprites + Animator Controller`).
+- 2026-10-18 — Dinis gerou Run + Crouch_Idle + Crouch_Walk do Tomás (total 20 frames), `Tomas_Controller` atualizado com `IsRunning`/`IsCrouching` e 18 transições cobrindo quase toda a matriz de combinações. Verificado ao nível dos dados. Única lacuna: falta transição direta `Run → Crouch_Idle` (só existe `Run → Crouch_Walk`) — risco só se `IsCrouching` e `IsMoving` mudarem no mesmo frame; não bloqueia.
+- 2026-10-18 — Dinis gerou Idle+Move para os 4 inimigos genéricos (Zombie, EyeGuy, Glitcher, Boss), mesma técnica. Cada um com Animator Controller próprio (`IsMoving`, Idle↔Move). Verificado: 8 clips com curvas corretas, ritmo de movimento varia por criatura (Zombie 8fps arrastado, EyeGuy/Boss 6fps a flutuar, Glitcher 10fps errático) — bate certo com o pedido (`feat(F1-07): generate movement sprites for the 4 generic enemies`).
+- 2026-10-18 — Apagados os 5 retratos originais (Player/Zombie/EyeGuy/Glitcher/Boss.png) a pedido do Dinis — confirmado sem referências no projeto antes de remover. Parte A marcada como abandonada.
 
 ## Ideias
 - Quando houver arte final de cada boss nomeado (F5/F6), repetir este processo substituindo os placeholders genéricos.

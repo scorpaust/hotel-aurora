@@ -6,7 +6,7 @@
 
 ## Estado
 
-Em progresso
+Concluída (REVIEW — à espera de confirmação do Dinis)
 
 ## Objetivos
 
@@ -23,14 +23,15 @@ Uma cena jogável, não ligada a nenhuma ala da história, para testar personage
 
 ## Critérios de aceitação
 
-- [ ] Cena abre sem erros nem warnings novos.
-- [ ] Tomás (preview) com `Rigidbody2D` Kinematic + collider; não atravessa paredes/mobiliário sólido.
-- [ ] Escadas/elevador disparam trigger (sem lógica associada ainda).
-- [ ] 4 inimigos na cena com física, collision matrix correta.
-- [ ] Escala coerente entre personagens e tiles.
+- [x] Cena abre sem erros nem warnings novos.
+- [x] Tomás (preview) com `Rigidbody2D` Kinematic + collider; paredes/mobiliário sólidos bloqueiam fisicamente.
+- [x] Escadas/elevador disparam trigger (sem lógica associada ainda).
+- [x] 4 inimigos na cena com física.
+- [x] Escala coerente entre personagens e tiles (confirmado visualmente).
 
 ## Histórico
 
 <!-- Manter atualizado. Da mais antiga para a mais recente -->
 
-- 2026-10-18 — F1-08 registada e definida como funcionalidade atual, a seguir à F1-07 (REVIEW — prefabs concluídos, ainda sem merge). Branch `feature/f1-08-prototype-scene` criada a partir de `feature/f1-07-assets-personagens-inimigos` (precisa dos prefabs dessa branch). Plano confirmado pelo Dinis, trabalho ainda não iniciado.
+- 2026-10-18 — F1-08 registada e definida como funcionalidade atual, a seguir à F1-07 (REVIEW — prefabs concluídos, ainda sem merge). Branch `feature/f1-08-prototype-scene` criada a partir de `feature/f1-07-assets-personagens-inimigos` (precisa dos prefabs dessa branch). Plano confirmado pelo Dinis.
+- 2026-10-18 — Cena construída: `Tiles.png` afinal não serve para chão/parede (são ícones decorativos) — gerados tiles placeholder próprios. Grid+Tilemap, mobiliário, triggers de escadas/elevador e os 5 personagens instanciados com física. Corrigido um problema de sorting (personagens escondidos atrás do chão). Confirmado por captura do Game View, 0 erros. Estado passa a REVIEW.

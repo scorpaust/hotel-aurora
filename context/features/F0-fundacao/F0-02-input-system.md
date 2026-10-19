@@ -1,5 +1,5 @@
 # F0-02 — Input System e action maps
-**Estado:** REVIEW · **Depende de:** F0-01 · **Assemblies:** Aurora.Input, Aurora.Core
+**Estado:** DONE · **Depende de:** F0-01 · **Assemblies:** Aurora.Input, Aurora.Core
 
 ## Objetivo
 Toda a entrada do jogo passa pelo Input System moderno: um asset Project-wide, classe gerada, `IInputService` como única porta de entrada, deteção de dispositivo ativo.
@@ -58,7 +58,8 @@ Tomás é um rapaz de mãos ocupadas — lanterna, ferramentas, esconder-se. O i
   - Nota: a `Dispose()` gerada chama `UnityEngine.Object.Destroy()`, que é ilegal em Edit Mode — os testes EditMode não chamam `Dispose()` (só desativam mapas), deixando o `InputActionAsset` ser limpo no próximo domain reload. Os testes PlayMode chamam `Dispose()` normalmente em `TearDown` (Play Mode permite `Destroy`).
 - 2026-10-19 — Cena `Tests/Scenes/SCN_InputSandbox` criada (registada no Build Settings) com `InputSandboxHud` (`Aurora.Input`, gated por `#if AURORA_DEV`) — mostra dispositivo atual, última ação disparada e valor de `Move`, via UI Toolkit (`UIDocument` + `SO_InputSandboxPanelSettings`). Verificado em Play Mode no Editor: tecla D dispara `Move` e atualiza o HUD corretamente.
   - Símbolo `AURORA_DEV` adicionado aos Scripting Define Symbols de Standalone e WebGL (antes não existia nenhum). Será removido dos builds de release pela F0-04.
-- 2026-10-19 — Pendente: testar a sandbox num build Web real (critério de aceitação 5). O módulo WebGL está instalado, mas ainda não há pipeline de build (F0-04) nem template WebGL customizado — mudar de build target agora é uma operação longa e disruptiva (reimport completo). Decisão: fazer esse teste em conjunto com a F0-04, quando o pipeline de build existir. Por omissão, o pedido de foco do canvas no Web (item 6 da Especificação) também fica para a F0-04, já que depende do template `index.html` do WebGL que essa feature vai criar.
+- 2026-10-19 — Pendente: testar a sandbox num build Web real (critério de aceitação 5). O módulo WebGL está instalado, mas ainda não há pipeline de build (F0-04) nem template WebGL customizado — mudar de build target agora é uma operação longa e disruptiva (reimport completo). Decisão (confirmada pelo Dinis): fazer esse teste em conjunto com a F0-04, quando o pipeline de build existir. Por omissão, o pedido de foco do canvas no Web (item 6 da Especificação) também fica para a F0-04, já que depende do template `index.html` do WebGL que essa feature vai criar.
+- 2026-10-19 — Dinis testou a `SCN_InputSandbox` no Editor (Play Mode): `Move` responde a WASD, `Last action` mostra o nome da última ação disparada, `Device` muda corretamente. Confirmado "os inputs estão ok" — feature marcada `DONE`.
 
 ## Ideias
 - Gyro do comando PlayStation para apontar a lanterna (pós-lançamento).

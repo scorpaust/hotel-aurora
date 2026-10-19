@@ -1,40 +1,37 @@
 # Funcionalidade Atual
 
-<!-- Ver especificação completa em context/features/F0-fundacao/F0-02-input-system.md -->
+<!-- Ver especificação completa em context/features/F0-fundacao/F0-03-bootstrap-e-servicos.md -->
 
-# F0-02 — Input System e action maps
+# F0-03 — Bootstrap, serviços e estado de jogo
 
 ## Estado
 
-Concluída
+Em revisão (REVIEW) — à espera do Dinis testar
 
 ## Objetivos
 
-Toda a entrada do jogo passa pelo Input System moderno: um asset Project-wide, classe gerada, `IInputService` como única porta de entrada, deteção de dispositivo ativo.
+Arranque previsível: a cena `Boot` cria os serviços, a máquina de estados global controla o fluxo, e qualquer cena pode ser testada com Play no Editor.
 
-- Criar `Assets/_Project/Input/AuroraInput.inputactions` e atribuí-lo como Project-wide Actions.
-- Active Input Handling = Input System Package (New) apenas (já está assim desde a F0-01).
-- Action maps `Gameplay`, `UI`, `Dialogue`, `Cutscene` com as ações e bindings (teclado+rato e gamepad) de `codespec.md` §6.
-- Gerar a classe C# `AuroraInputActions` (namespace `Aurora.Input`).
-- `IInputService` (em `Aurora.Core`) + `InputService` (em `Aurora.Input`): propriedades tipadas por mapa, `SetContext(InputContext ctx)`, `CurrentDevice` + evento `DeviceChanged`.
-- Web: pedir foco do canvas no primeiro clique/tecla; documentar que `Esc` sai do fullscreen no browser.
-- Cena de teste `Tests/Scenes/SCN_InputSandbox` com debug de ação disparada e dispositivo atual (só `AURORA_DEV`).
+- `Services` (Aurora.Core): registo estático `Register<T>/Get<T>/TryGet<T>/Reset()`.
+- `GameBootstrap` (Aurora.Input) em `Boot.unity`: regista `InputService`, `GameStateService`, `SceneService`; carrega `MainMenu.unity` aditivamente.
+- Play-from-anywhere via `Aurora.Editor.PlayFromAnywhereBootstrapper`: cena ativa não-Boot → carrega `Boot` aditivamente, estado arranca em `Playing`.
+- `GameStateService`: estados Boot/MainMenu/Playing/Paused/Dialogue/Cutscene/Chase/GameOver, tabela de transições validada, cada estado liga a um `InputContext` e a `Time.timeScale`.
+- `GameEvent`/`GameEvent<T>` (SO) + `GameEventListener` para ligações no Inspector.
+- `ISceneService`/`SceneService`: `LoadAdditiveAsync`/`UnloadAsync` via `Awaitable` + `SceneManager`.
 
-**Não inclui:** UI de rebinding (F4-02), ícones de prompts (F4-02), rumble avançado.
+**Não inclui:** save (F1-06), áudio (F4-03), Addressables por ala (F1-02).
 
 ## Critérios de aceitação
 
-- [ ] Nenhuma referência a `UnityEngine.Input` em todo o projeto (validador da F0-01 verde).
-- [ ] Todas as ações têm binding teclado **e** gamepad.
-- [ ] `SetContext(Dialogue)` impede Move de disparar; `SetContext(Gameplay)` repõe.
-- [ ] Ligar um comando a meio altera `CurrentDevice` e dispara `DeviceChanged` uma única vez.
-- [ ] Sandbox funciona no Editor e num build Web de teste.
+- [x] Play em `Boot` leva ao MainMenu placeholder.
+- [x] Play numa cena de teste qualquer carrega `Boot` e fica jogável nessa cena.
+- [x] `Paused` coloca `timeScale = 0` e ativa o mapa UI; sair repõe.
+- [x] Transição inválida é rejeitada com erro claro.
+- [x] Sem fugas de estado entre Plays com Domain Reload desligado.
 
 ## Histórico
 
 <!-- Manter atualizado. Da mais antiga para a mais recente -->
 
-- 2026-10-18 — F0-02 definida como funcionalidade atual, a seguir à F0-01 (DONE). Trabalho ainda não iniciado.
-- 2026-10-18 — Dinis pede movimento a sério no sandbox da F1-08 em vez de atalho; escolhe fazer a F0-02 como deve ser primeiro. Branch `feature/f0-02-input-system` criada a partir de `main` (independente de F1-07/F1-08, que só dependem de F0-01).
-- 2026-10-19 — F0-02 implementada por completo: `AuroraInput.inputactions` (4 action maps, 2 control schemes) atribuído como Project-wide Actions, `IInputService`/`InputService`, troca de contexto, deteção de dispositivo, cena `SCN_InputSandbox`, testes EditMode+PlayMode todos a passar. Estado passa a REVIEW — falta só testar num build Web real (fica para a F0-04, que vai trazer o pipeline de build).
-- 2026-10-19 — Dinis testou a sandbox no Editor e confirmou "os inputs estão ok". F0-02 marcada `DONE`.
+- 2026-10-19 — Dinis escolhe fazer a F0-03 antes da F1-01 (Controlador do Tomás), porque o ponto 9 da F1-01 ("respeita GameState") depende de um `IGameStateService` que ainda não existe. Branch `feature/f0-03-bootstrap-e-servicos` criada a partir de `main` (que já tem a F0-02 DONE).
+- 2026-10-19 — F0-03 implementada por completo: `Services`, `GameStateService` (com tabela de transições e mapeamento para `InputContext`), `GameEvent`/`GameEvent<T>`/`GameEventListener`, `SceneService`, `GameBootstrap`, play-from-anywhere (em `Aurora.Editor`, não `Aurora.Input`, por causa da regra de `#if UNITY_EDITOR`). Cenas `Boot.unity`/`MainMenu.unity` criadas e testadas manualmente (arranque normal + play-from-anywhere + transição inválida). 26/26 testes (23 EditMode + 3 PlayMode) a passar. Estado passa a REVIEW.

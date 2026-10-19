@@ -6,7 +6,7 @@
 
 ## Estado
 
-Não iniciada
+Concluída
 
 ## Objetivos
 
@@ -35,3 +35,6 @@ Toda a entrada do jogo passa pelo Input System moderno: um asset Project-wide, c
 <!-- Manter atualizado. Da mais antiga para a mais recente -->
 
 - 2026-10-18 — F0-02 definida como funcionalidade atual, a seguir à F0-01 (DONE). Trabalho ainda não iniciado.
+- 2026-10-18 — Dinis pede movimento a sério no sandbox da F1-08 em vez de atalho; escolhe fazer a F0-02 como deve ser primeiro. Branch `feature/f0-02-input-system` criada a partir de `main` (independente de F1-07/F1-08, que só dependem de F0-01).
+- 2026-10-19 — F0-02 implementada por completo: `AuroraInput.inputactions` (4 action maps, 2 control schemes) atribuído como Project-wide Actions, `IInputService`/`InputService`, troca de contexto, deteção de dispositivo, cena `SCN_InputSandbox`, testes EditMode+PlayMode todos a passar. Estado passa a REVIEW — falta só testar num build Web real (fica para a F0-04, que vai trazer o pipeline de build).
+- 2026-10-19 — Dinis testou a sandbox no Editor e confirmou "os inputs estão ok". F0-02 marcada `DONE`.

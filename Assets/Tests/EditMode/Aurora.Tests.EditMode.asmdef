@@ -4,7 +4,10 @@
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
-        "Aurora.Editor"
+        "Aurora.Editor",
+        "Aurora.Core",
+        "Aurora.Input",
+        "Unity.InputSystem"
     ],
     "includePlatforms": [
         "Editor"

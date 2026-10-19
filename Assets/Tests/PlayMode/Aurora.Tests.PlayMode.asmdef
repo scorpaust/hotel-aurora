@@ -6,7 +6,9 @@
         "UnityEditor.TestRunner",
         "Aurora.Core",
         "Aurora.Input",
-        "Aurora.Gameplay"
+        "Aurora.Gameplay",
+        "Unity.InputSystem",
+        "Unity.InputSystem.TestFramework"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

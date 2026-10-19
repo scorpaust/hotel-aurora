@@ -13,7 +13,7 @@ Objetivo: projeto limpo, input moderno e builds Web/PC a funcionar **antes** de 
 | ID | Feature | Depende de | Estado |
 |---|---|---|---|
 | F0-01 | [Projeto, pacotes e assemblies](F0-fundacao/F0-01-projeto-e-pacotes.md) | — | DONE |
-| F0-02 | [Input System e action maps](F0-fundacao/F0-02-input-system.md) | F0-01 | TODO |
+| F0-02 | [Input System e action maps](F0-fundacao/F0-02-input-system.md) | F0-01 | DONE |
 | F0-03 | [Bootstrap, serviços e estado de jogo](F0-fundacao/F0-03-bootstrap-e-servicos.md) | F0-02 | TODO |
 | F0-04 | [Build profiles e pipeline CLI](F0-fundacao/F0-04-builds-e-pipeline.md) | F0-03 | TODO |
 

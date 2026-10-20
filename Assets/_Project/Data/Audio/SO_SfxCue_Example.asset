@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea9d025aef7c17a4ea261768341485e7, type: 3}
+  m_Name: SO_SfxCue_Example
+  m_EditorClassIdentifier: Aurora.Audio::Aurora.Audio.SfxCueDefinition
+  _id: sfx.example.creak
+  _clip: {fileID: 0}
+  _volume: 1
+  _loop: 0
+  _priority: 128

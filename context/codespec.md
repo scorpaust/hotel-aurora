@@ -100,11 +100,12 @@ Dependências entre assemblies (só neste sentido):
 Core ← Input ← Gameplay ← Hotel
 Core ← Persistence
 Core ← Narrative ← Gameplay
-Core ← Audio
+Core ← Narrative ← Hotel
+Core ← Audio ← Hotel
 Core ← Platform ← Platform.Steam
 UI → (Core, Input, Narrative, Gameplay via eventos)
 ```
-`Core` não depende de nada do projeto. `UI` nunca é referenciado por gameplay.
+`Core` não depende de nada do projeto. `UI` nunca é referenciado por gameplay. `Hotel` pode referenciar `Narrative` e `Audio` (bosses/armadilhas apontam para memórias, diálogos e cues de áudio/vfx — ver §5.4/§5.6), mas `Narrative` e `Audio` nunca referenciam `Hotel`.
 
 ---
 

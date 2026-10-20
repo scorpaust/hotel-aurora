@@ -1,5 +1,5 @@
 # F1-09 — Definições configuráveis de conteúdo
-**Estado:** DOING · **Depende de:** F1-07 · **Assemblies:** Aurora.Core, Aurora.Hotel, Aurora.Narrative, Aurora.Audio
+**Estado:** REVIEW · **Depende de:** F1-07 · **Assemblies:** Aurora.Core, Aurora.Hotel, Aurora.Narrative, Aurora.Audio
 
 ## Objetivo
 Dar a inimigos, bosses, armadilhas, cutscenes, áudio e narrativa a mesma abordagem orientada a dados que `ItemDefinition`/`MemoryDefinition`/`DialogueGraph` já têm — para que cada ala da história se monte a partir de peças reutilizáveis em vez de código/cenas escritos à mão do zero. Isto não muda a história nem introduce combate: é só a camada de dados por baixo do conteúdo que já está planeado.
@@ -22,16 +22,20 @@ Nenhum direto — é infraestrutura de conteúdo. Serve para construir, mais dep
 8. Validador de Editor (`Aurora.Editor`, extensão do `ProjectValidator` da F0-01 ou um validador novo): percorre os SOs de cada tipo e reporta ids duplicados ou campos obrigatórios vazios.
 
 ## Critérios de aceitação
-- [ ] As 9 classes de *Definition compilam e aparecem no menu de criação de assets (`Assets/Create/Aurora/...`).
-- [ ] Pelo menos um asset de exemplo de cada tipo, criado e preenchido, para validar o schema na prática (sem precisar de ser conteúdo final).
-- [ ] `BossDefinition` com 2+ fases de exemplo mostra a lista ordenada corretamente no Inspector.
-- [ ] Validador deteta um id duplicado proposital e reporta erro claro.
-- [ ] Nenhuma destas classes introduz lógica de gameplay (puro dado — sem `MonoBehaviour`, sem `Update`).
+- [x] As classes de *Definition compilam e aparecem no menu de criação de assets (`Assets/Create/Aurora/Content/...`).
+- [x] Pelo menos um asset de exemplo de cada tipo, criado e preenchido, para validar o schema na prática (sem precisar de ser conteúdo final).
+- [x] `BossDefinition` com 2+ fases de exemplo mostra a lista ordenada corretamente no Inspector.
+- [x] Validador deteta um id duplicado proposital e reporta erro claro.
+- [x] Nenhuma destas classes introduz lógica de gameplay (puro dado — sem `MonoBehaviour`, sem `Update`).
 
 ## Testes
-- EditMode: validador de ids duplicados/campos obrigatórios; serialização/desserialização round-trip de `BossDefinition` com fases.
+- EditMode: validador de ids duplicados/campos obrigatórios; serialização/desserialização round-trip de `BossDefinition` com fases. 5 testes (`ContentDefinitionValidatorTests`) a passar.
 
 ## Registo
+- 2026-10-20 — Implementado. Decisão de arquitetura: os tipos pura-dado partilhados entre domínios (`DialogueGraph`, `MemoryDefinition`, `GuestBookEntry` — placeholders mínimos até F2-01/F2-03 os desenvolverem a sério) ficam em `Aurora.Core`, porque `BossDefinition` (Hotel) precisa de os referenciar e `Narrative`/`Audio` são irmãos de `Hotel` no grafo de dependências (não se veem um ao outro). Em vez disso, `Aurora.Hotel` passou a poder referenciar `Aurora.Narrative` e `Aurora.Audio` diretamente (`codespec.md` §4 atualizado) — é uma direção nova e deliberada, não um atalho.
+  - `IContentDefinition` (Core): contrato mínimo (`Id`) partilhado por todas as *Definition, para o validador funcionar sem depender de `Hotel`/`Narrative`/`Audio`.
+  - `ContentDefinitionValidator` (Aurora.Editor): aceita uma lista de candidatos opcional (testável sem tocar no `AssetDatabase`) e por omissão varre o projeto todo. Testado com candidatos falsos (5 testes) e, à parte, confirmado contra os assets reais do projeto (duplicado proposital detetado e limpo).
+  - 11 assets de exemplo criados em `Assets/_Project/Data/{Enemies,Bosses,Traps,Cutscenes,Audio,Narrative}/`, incluindo um `BossDefinition` com 2 fases e todas as referências cruzadas preenchidas (Boss→Enemy/Memory/GuestBook, Trap→Vfx/Sfx, NarrativeBeat→DialogueGraph).
 
 ## Ideias
 - Quando a F4-03 (áudio) existir a sério, ligar `MusicCueDefinition`/`SfxCueDefinition`/`VfxCueDefinition` ao `IAudioService` real.

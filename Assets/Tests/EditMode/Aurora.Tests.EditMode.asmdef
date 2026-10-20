@@ -7,6 +7,9 @@
         "Aurora.Editor",
         "Aurora.Core",
         "Aurora.Input",
+        "Aurora.Hotel",
+        "Aurora.Narrative",
+        "Aurora.Audio",
         "Unity.InputSystem"
     ],
     "includePlatforms": [

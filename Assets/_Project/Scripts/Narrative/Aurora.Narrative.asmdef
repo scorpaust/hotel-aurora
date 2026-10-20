@@ -2,7 +2,8 @@
     "name": "Aurora.Narrative",
     "rootNamespace": "Aurora.Narrative",
     "references": [
-        "Aurora.Core"
+        "Aurora.Core",
+        "Unity.Timeline"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

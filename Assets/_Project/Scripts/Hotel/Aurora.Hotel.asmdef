@@ -4,7 +4,9 @@
     "references": [
         "Aurora.Core",
         "Aurora.Input",
-        "Aurora.Gameplay"
+        "Aurora.Gameplay",
+        "Aurora.Narrative",
+        "Aurora.Audio"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

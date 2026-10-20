@@ -15,6 +15,14 @@ namespace Aurora.Gameplay
         private static readonly int IsRunningParam = Animator.StringToHash("IsRunning");
         private static readonly int IsCrouchingParam = Animator.StringToHash("IsCrouching");
 
+        // Keeps a small gap between the collider and whatever it casts against, so the next
+        // cast never starts flush against a wall. Physics2D.queriesStartInColliders is off
+        // project-wide (see Physics2DSettings), which means a cast whose origin already
+        // touches a collider ignores it entirely — without this margin, a kinematic box that
+        // comes to rest exactly against a thin (edge-only) collider, like a Tilemap wall, can
+        // slip through on the very next cast.
+        private const float SkinWidth = 0.02f;
+
         [SerializeField] private PlayerMovementConfig _config = null!;
         [SerializeField] private LayerMask _collisionMask;
 
@@ -63,8 +71,8 @@ namespace Aurora.Gameplay
 
             var distance = delta.magnitude;
             var direction = delta.normalized;
-            var hit = Physics2D.BoxCast(_rigidbody.position, _collider.size, 0f, direction, distance, _collisionMask);
-            var allowedDistance = hit.collider != null ? Mathf.Max(0f, hit.distance) : distance;
+            var hit = Physics2D.BoxCast(_rigidbody.position, _collider.size, 0f, direction, distance + SkinWidth, _collisionMask);
+            var allowedDistance = hit.collider != null ? Mathf.Max(0f, hit.distance - SkinWidth) : distance;
 
             if (allowedDistance > 0f)
                 _rigidbody.MovePosition(_rigidbody.position + direction * allowedDistance);

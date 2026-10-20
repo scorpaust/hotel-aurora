@@ -66,5 +66,28 @@ namespace Aurora.Tests.PlayMode
 
             Assert.AreEqual(startPosition, (Vector3)_instance.transform.position);
         }
+
+        [UnityTest]
+        public IEnumerator HoldingMoveTowardThinWall_NeverTunnelsThrough()
+        {
+            const int environmentLayer = 10;
+
+            var wallX = _instance.transform.position.x + 1f;
+            var wall = new GameObject("TestThinWall") { layer = environmentLayer };
+            var wallCollider = wall.AddComponent<BoxCollider2D>();
+            wallCollider.size = new Vector2(0.05f, 2f);
+            wall.transform.position = new Vector3(wallX, _instance.transform.position.y, 0f);
+
+            Press(_keyboard.dKey);
+            // Walking at ~2.2 u/s for 2s covers ~4.4 units — far more than the 1-unit gap,
+            // enough to prove a tunneling regression if the skin-width fix ever regresses.
+            for (var i = 0; i < 120; i++)
+                yield return null;
+            Release(_keyboard.dKey);
+
+            Object.Destroy(wall);
+
+            Assert.LessOrEqual(_instance.transform.position.x, wallX);
+        }
     }
 }

@@ -3,6 +3,8 @@
     "rootNamespace": "Aurora.Editor",
     "references": [
         "Aurora.Core",
+        "Aurora.Hotel",
+        "Aurora.Narrative",
         "Unity.2D.Sprite.Editor"
     ],
     "includePlatforms": [

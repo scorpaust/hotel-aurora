@@ -40,5 +40,6 @@ Nenhum direto.
 - 2026-10-20 — Dinis reportou o aviso "Display 1 No cameras rendering" ao testar. Nem `Boot` nem `MainMenu` tinham Camera (a UI Toolkit em Screen Space Overlay não precisa de câmara para desenhar, por isso o texto já aparecia, mas o aviso ficava). Adicionada uma `MainCamera` à cena `Boot` (é a cena sempre carregada), `Clear Flags = Solid Color` com `--aurora-ink` (`#1B1714`, `uispec.md` §1) em vez do preto/skybox por omissão. Confirmado: aviso desaparece, fundo correto.
 - 2026-10-20 — Dinis reportou também o aviso de `UI/Navigate` (ver Registo da F0-02, onde o `AuroraInput.inputactions` vive). Corrigido lá; 26/26 testes continuam a passar.
 - 2026-10-20 — Dinis confirmou "Tudo okapa" depois das duas correções. F0-03 marcada `DONE`.
+- 2026-10-20 — Regressão descoberta durante a F1-01: como a `Boot` carrega sempre por baixo (play-from-anywhere), a `MainCamera` que lhe pus (ver entrada acima) tinha a mesma `m_Depth` (0) que a câmara de qualquer cena de jogo — em `SCN_PrototypeSandbox` isso fazia a câmara da `Boot` desenhar por cima e apagar a cena toda (ecrã preto/cor sólida, sem nada visível). Corrigido: `m_Depth = -100` na câmara da `Boot`, para desenhar sempre primeiro/por baixo. UI Toolkit (Screen Space Overlay) não é afetada por depth de câmara, por isso o MainMenu continua igual.
 
 ## Ideias

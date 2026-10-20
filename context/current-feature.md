@@ -6,7 +6,7 @@
 
 ## Estado
 
-Em revisão (REVIEW) — à espera de teste/confirmação
+DONE
 
 ## Objetivos
 
@@ -19,11 +19,11 @@ Dar a inimigos, bosses, armadilhas, cutscenes, áudio e narrativa a mesma aborda
 
 ## Critérios de aceitação
 
-- [ ] As 9 classes de *Definition compilam e aparecem no menu de criação de assets.
-- [ ] Pelo menos um asset de exemplo de cada tipo, criado e preenchido.
-- [ ] `BossDefinition` com 2+ fases de exemplo mostra a lista ordenada corretamente no Inspector.
-- [ ] Validador deteta um id duplicado proposital e reporta erro claro.
-- [ ] Nenhuma destas classes introduz lógica de gameplay.
+- [x] As 9 classes de *Definition compilam e aparecem no menu de criação de assets.
+- [x] Pelo menos um asset de exemplo de cada tipo, criado e preenchido.
+- [x] `BossDefinition` com 2+ fases de exemplo mostra a lista ordenada corretamente no Inspector.
+- [x] Validador deteta um id duplicado proposital e reporta erro claro.
+- [x] Nenhuma destas classes introduz lógica de gameplay.
 
 ## Histórico
 
@@ -33,3 +33,4 @@ Dar a inimigos, bosses, armadilhas, cutscenes, áudio e narrativa a mesma aborda
 - 2026-10-20 — Esclarecida a dúvida central antes de avançar: este sistema serve para construir a **mesma história fixa** mais depressa (não torna o jogo procedimental/variável), e as "armas" dos inimigos/bosses são objetos de identidade narrativos ligados à lanterna, não combate — mantém `codespec.md` §1 ("sem combate direto") intacto.
 - 2026-10-20 — Registadas duas novas features na Fase 1: F1-09 (definições configuráveis) e F1-10 (fluxos de nível + gerador), com F5-03/Fase 6 a passarem a depender de F1-10. `codespec.md` §5.4/§5.6 atualizado com o novo modelo de dados. Branch `feature/f1-09-definicoes-configuraveis` criada a partir de `main` (independente da F1-01, cujo Etapa B fica em pausa).
 - 2026-10-20 — F1-09 implementada: `EnemyDefinition`/`BossDefinition`/`TrapDefinition` (Hotel), `CutsceneDefinition`/`NarrativeBeatDefinition` (Narrative), `MusicCueDefinition`/`SfxCueDefinition`/`VfxCueDefinition` (Audio), mais `IContentDefinition`/`DialogueGraph`/`MemoryDefinition`/`GuestBookEntry` (Core, partilhados). `Aurora.Hotel` passou a poder referenciar `Aurora.Narrative`/`Aurora.Audio` (decisão de arquitetura registada no Registo da F1-09). Validador de ids duplicados/campos vazios, 11 assets de exemplo (incluindo um Boss com 2 fases), 28/28 testes a passar. Estado passa a REVIEW.
+- 2026-10-21 — Durante o teste de confirmação, encontrado e corrigido um bug à parte: a câmara do `Boot` tinha voltado a `depth 0` (empatada com a câmara das cenas), fazendo o Solid Color do Boot tapar a cena ativa ao dar Play — ecrã preto. Corrigido para `-100` outra vez (fix já feito uma vez na F0-03 mas nunca gravado na cena commitada). Validador confirmado em cima de dois assets reais criados pelo menu Create sem id preenchido (apanhados e corrigidos). Estado passa a `DONE`.

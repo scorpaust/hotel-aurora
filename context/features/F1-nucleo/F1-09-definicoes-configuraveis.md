@@ -1,5 +1,5 @@
 # F1-09 — Definições configuráveis de conteúdo
-**Estado:** REVIEW · **Depende de:** F1-07 · **Assemblies:** Aurora.Core, Aurora.Hotel, Aurora.Narrative, Aurora.Audio
+**Estado:** DONE · **Depende de:** F1-07 · **Assemblies:** Aurora.Core, Aurora.Hotel, Aurora.Narrative, Aurora.Audio
 
 ## Objetivo
 Dar a inimigos, bosses, armadilhas, cutscenes, áudio e narrativa a mesma abordagem orientada a dados que `ItemDefinition`/`MemoryDefinition`/`DialogueGraph` já têm — para que cada ala da história se monte a partir de peças reutilizáveis em vez de código/cenas escritos à mão do zero. Isto não muda a história nem introduce combate: é só a camada de dados por baixo do conteúdo que já está planeado.
@@ -36,6 +36,7 @@ Nenhum direto — é infraestrutura de conteúdo. Serve para construir, mais dep
   - `IContentDefinition` (Core): contrato mínimo (`Id`) partilhado por todas as *Definition, para o validador funcionar sem depender de `Hotel`/`Narrative`/`Audio`.
   - `ContentDefinitionValidator` (Aurora.Editor): aceita uma lista de candidatos opcional (testável sem tocar no `AssetDatabase`) e por omissão varre o projeto todo. Testado com candidatos falsos (5 testes) e, à parte, confirmado contra os assets reais do projeto (duplicado proposital detetado e limpo).
   - 11 assets de exemplo criados em `Assets/_Project/Data/{Enemies,Bosses,Traps,Cutscenes,Audio,Narrative}/`, incluindo um `BossDefinition` com 2 fases e todas as referências cruzadas preenchidas (Boss→Enemy/Memory/GuestBook, Trap→Vfx/Sfx, NarrativeBeat→DialogueGraph).
+- 2026-10-21 — Confirmação final: dois assets de teste criados a partir do menu `Assets/Create/Aurora/Content/...` sem `id` preenchido foram apanhados pelo validador real (`CutsceneDefinition`/`NarrativeBeatDefinition` com Id vazio), confirmando o critério "deteta id duplicado/vazio" fora dos testes automatizados. Apagados depois de confirmado; `ContentDefinitionValidator.Validate()` volta a `Passed=True`. Critérios 4/5 de `rules.md` §8 não se aplicam (sem gameplay, sem rendering/save tocados). Estado passa a `DONE`.
 
 ## Ideias
 - Quando a F4-03 (áudio) existir a sério, ligar `MusicCueDefinition`/`SfxCueDefinition`/`VfxCueDefinition` ao `IAudioService` real.

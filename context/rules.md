@@ -1,6 +1,6 @@
 # Regras de trabalho — Hotel Aurora
 
-> Regras para o Claude (e para quem trabalhar no projeto). São obrigatórias; se uma regra impedir algo necessário, pára e pergunta ao Dinis.
+> Regras para o Claude (e para quem trabalhar no projeto). São obrigatórias; se uma regra impedir algo necessário, pára e pergunta antes de avançar.
 
 ---
 
@@ -50,11 +50,11 @@ Usa sempre o executável do Editor da versão do projeto. Variável sugerida: `U
 
 - Depois de cada passo de implementação: compilar e ler o log. **Erros de compilação ou warnings novos = não avançar.**
 - Os builds usam **Build Profiles** (Web, Windows, Windows-Steam), definidos na feature de fundação.
-- Se o Editor estiver aberto com o projeto, o batchmode falha por lock: avisa o Dinis em vez de forçar.
+- Se o Editor estiver aberto com o projeto, o batchmode falha por lock: avisa em vez de forçar.
 
 ## 6. Assets e cenas
 
-- Criar/alterar prefabs, cenas e ScriptableObjects através de scripts de Editor (`Aurora.Editor`) ou pedir ao Dinis para o fazer no Editor. Nunca editar YAML à mão, exceto alterações triviais e explicadas.
+- Criar/alterar prefabs, cenas e ScriptableObjects através de scripts de Editor (`Aurora.Editor`) ou pedir para serem feitos diretamente no Editor. Nunca editar YAML à mão, exceto alterações triviais e explicadas.
 - `.meta` sempre versionados junto ao asset.
 - Nomes: `PFB_` prefabs, `SO_` ScriptableObjects, `SCN_` cenas de ala, `SPR_`, `ANI_`, `SFX_`, `MUS_`, `UXML_`, `USS_`.
 - Conteúdo novo sempre Addressable, agrupado por ala.

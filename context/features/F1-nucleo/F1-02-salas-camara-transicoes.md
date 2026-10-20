@@ -15,7 +15,7 @@ O hotel é feito de salas ligadas por portas, escadas e elevadores. A câmara en
 1. Cada ala = cena aditiva Addressable `SCN_<Ala>`; dentro, cada sala é um GameObject `Room` com `RoomDefinition` (id, nome localizado, limites, spawn points).
 2. `RoomConnection`: tipo (`Door`, `Stairwell`, `Elevator`, `Passage`), destino (`roomId` + `spawnId`), condição opcional por flag (`WorldFlags`) e **destino alternativo** se a condição falhar.
 3. Transição: Interact na porta → input bloqueado → fade 0.25 s → mover jogador e companheira → trocar confiner → fade in. Se o destino é outra ala, `SceneService` carrega a nova antes e descarrega a antiga depois.
-4. Cinemachine 3: `CinemachineCamera` com `CinemachinePositionComposer` e `CinemachineConfiner2D` (atualizado por sala); dead zone horizontal pequena; *lookahead* leve na direção do movimento; câmara *pixel perfect* se a arte final o pedir (decidir com o Dinis antes da F5).
+4. Cinemachine 3: `CinemachineCamera` com `CinemachinePositionComposer` e `CinemachineConfiner2D` (atualizado por sala); dead zone horizontal pequena; *lookahead* leve na direção do movimento; câmara *pixel perfect* se a arte final o pedir (decidir antes da F5).
 5. `ISceneService` passa a usar Addressables (`Addressables.LoadSceneAsync`), com grupos por ala.
 6. Cena de teste `SCN_TestWing` com 3 salas, 1 escada entre andares e 1 porta condicional.
 

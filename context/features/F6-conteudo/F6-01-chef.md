@@ -7,7 +7,7 @@ Segunda ala. Introduz **tentação**: o hotel oferece coisas ao jogador e aceit�
 ## Contexto na história
 "O Chef do Banquete, uma criatura que prepara as refeições preferidas das vítimas e transforma a saudade numa fome impossível de saciar." O jantar servido para convidados invisíveis na receção vinha daqui.
 
-> **Decisão a tomar com o Dinis:** quem era o Chef e qual a refeição que ele próprio perdeu.
+> **Decisão a tomar antes de implementar:** quem era o Chef e qual a refeição que ele próprio perdeu.
 
 ## Âmbito
 **Inclui:** `SCN_Banquet` (salão, cozinhas, câmara frigorífica, monta-cargas), o Chef, mecânica de **pratos-tentação**, fragmento 3/5 do Tomás, memória do Chef.

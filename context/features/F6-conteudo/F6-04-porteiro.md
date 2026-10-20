@@ -7,7 +7,7 @@ Quinta ala e a mais agressiva. O Porteiro é quem impede as fugas — o confront
 ## Contexto na história
 "O Porteiro, que transporta às costas todas as malas dos que tentaram fugir — com alguma coisa ainda a mexer-se lá dentro."
 
-> **Decisão a tomar com o Dinis:** quem era o Porteiro e porque se tornou guardião das saídas.
+> **Decisão a tomar antes de implementar:** quem era o Porteiro e porque se tornou guardião das saídas.
 
 ## Âmbito
 **Inclui:** `SCN_Luggage` (átrio de serviço, bagageira, garagem, elevador de carga, escadaria principal), o Porteiro, mecânica das **malas**, perseguição mais longa do jogo até aqui, acesso ao último andar.

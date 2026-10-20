@@ -1,6 +1,6 @@
 # Features — mapa de fases
 
-Estados: `TODO` · `DOING` · `REVIEW` (feito, à espera do Dinis testar) · `DONE` · `BLOCKED`
+Estados: `TODO` · `DOING` · `REVIEW` (feito, à espera de teste/confirmação) · `DONE` · `BLOCKED`
 
 Cada ficheiro segue o mesmo modelo: objetivo, contexto na história, âmbito, especificação, critérios de aceitação, testes, registo.
 Trabalha por ordem. Uma feature só começa quando as dependências estão `DONE`.

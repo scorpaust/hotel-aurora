@@ -6,7 +6,7 @@
 
 ## Estado
 
-Em revisão (REVIEW) — à espera de teste/confirmação
+DONE
 
 ## Objetivos
 
@@ -30,3 +30,4 @@ Descrever cada ala como uma sequência ordenada de "beats" (cutscene, exploraç�
 <!-- Manter atualizado. Da mais antiga para a mais recente -->
 
 - 2026-10-21 — Implementado na branch `feature/f1-10-fluxos-nivel-gerador` (a partir de `main`, já com F1-09 integrada). `LevelBeatType`/`LevelBeat`/`LevelFlowDefinition`/`RoomDefinition` em `Aurora.Hotel`; `LevelFlowValidator`/`LevelGeneratorWindow` em `Aurora.Editor` (que passou a referenciar `Aurora.Hotel`/`Aurora.Narrative` — só tooling, nunca no build do jogador). Placeholders de geração usam um sprite partilhado tingido por tipo de beat, em vez de 9 sprites separados. Geração testada duas vezes seguidas (via reflexão) sem deixar lixo. 2 fluxos de exemplo + 1 `RoomDefinition` de exemplo criados. 33/33 testes EditMode a passar (5 novos `LevelFlowTests`). Estado passa a REVIEW.
+- 2026-10-21 — Confirmado. Estado passa a `DONE`, merge para `main`.

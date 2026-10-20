@@ -31,7 +31,7 @@ Objetivo: Tomás a andar numa sala de teste, com lanterna, ferramentas e checkpo
 | F1-07 | [Assets base: personagens e inimigos](F1-nucleo/F1-07-assets-personagens-inimigos.md) | F0-01 | REVIEW |
 | F1-08 | [Cena de protótipo / sandbox de testes](F1-nucleo/F1-08-cena-prototipo-sandbox.md) | F1-07 | REVIEW |
 | F1-09 | [Definições configuráveis de conteúdo](F1-nucleo/F1-09-definicoes-configuraveis.md) | F1-07 | DONE |
-| F1-10 | [Fluxos de nível e gerador](F1-nucleo/F1-10-fluxos-nivel-gerador.md) | F1-09 | REVIEW |
+| F1-10 | [Fluxos de nível e gerador](F1-nucleo/F1-10-fluxos-nivel-gerador.md) | F1-09 | DONE |
 
 ## Fase 2 — Narrativa
 | ID | Feature | Depende de | Estado |

@@ -1,5 +1,5 @@
 # F1-10 — Fluxos de nível e gerador
-**Estado:** REVIEW · **Depende de:** F1-09 · **Assemblies:** Aurora.Hotel, Aurora.Narrative, Aurora.Editor
+**Estado:** DONE · **Depende de:** F1-09 · **Assemblies:** Aurora.Hotel, Aurora.Narrative, Aurora.Editor
 
 ## Objetivo
 Descrever cada ala como uma sequência ordenada de "beats" (cutscene, exploração, inimigos, armadilhas, labirinto, interação narrativa, miniboss, bónus, boss) e dar uma ferramenta de Editor que monta a cena da ala a partir dessa sequência — para que montar uma ala nova seja compor peças já feitas, não escrever cada uma do zero.

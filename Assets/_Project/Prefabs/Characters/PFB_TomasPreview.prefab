@@ -206,4 +206,4 @@ MonoBehaviour:
   _config: {fileID: 11400000, guid: c8ca08388a7878840918dde6217685ab, type: 2}
   _collisionMask:
     serializedVersion: 2
-    m_Bits: 1024
+    m_Bits: 1536

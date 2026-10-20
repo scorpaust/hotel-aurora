@@ -1,3 +1,5 @@
+#nullable enable
+
 using Aurora.Core;
 using NUnit.Framework;
 using UnityEngine;
@@ -15,7 +17,9 @@ namespace Aurora.Tests.EditMode
             public ICutsceneActions Cutscene => null!;
             public InputContext CurrentContext { get; private set; }
             public InputDeviceKind CurrentDevice => InputDeviceKind.KeyboardMouse;
+#pragma warning disable CS0067 // never raised: this fake never changes device
             public event System.Action<InputDeviceKind>? DeviceChanged;
+#pragma warning restore CS0067
 
             public void SetContext(InputContext context)
             {

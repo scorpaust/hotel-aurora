@@ -578,7 +578,7 @@ namespace Aurora.Input
             ""actions"": [
                 {
                     ""name"": ""Navigate"",
-                    ""type"": ""Value"",
+                    ""type"": ""PassThrough"",
                     ""id"": ""cfecd57e-5ad5-4598-bafd-dc70b2338382"",
                     ""expectedControlType"": ""Vector2"",
                     ""processors"": """",

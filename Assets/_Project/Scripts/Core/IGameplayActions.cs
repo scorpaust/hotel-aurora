@@ -1,3 +1,5 @@
+#nullable enable
+
 using UnityEngine.InputSystem;
 
 namespace Aurora.Core

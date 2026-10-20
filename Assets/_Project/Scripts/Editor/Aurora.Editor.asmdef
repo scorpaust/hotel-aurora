@@ -1,7 +1,9 @@
 {
     "name": "Aurora.Editor",
     "rootNamespace": "Aurora.Editor",
-    "references": [],
+    "references": [
+        "Aurora.Core"
+    ],
     "includePlatforms": [
         "Editor"
     ],

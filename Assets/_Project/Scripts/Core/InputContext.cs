@@ -1,3 +1,5 @@
+#nullable enable
+
 namespace Aurora.Core
 {
     public enum InputContext

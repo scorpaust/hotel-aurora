@@ -28,7 +28,7 @@ Objetivo: Tomás a andar numa sala de teste, com lanterna, ferramentas e checkpo
 | F1-04 | [Lanterna e camada do passado](F1-nucleo/F1-04-lanterna-camada-passado.md) | F1-03 | TODO |
 | F1-05 | [Ferramentas e mochila](F1-nucleo/F1-05-ferramentas-mochila.md) | F1-03 | TODO |
 | F1-06 | [Save, checkpoints e flags](F1-nucleo/F1-06-save-checkpoints.md) | F1-02, F1-05 | TODO |
-| F1-07 | [Assets base: personagens e inimigos](F1-nucleo/F1-07-assets-personagens-inimigos.md) | F0-01 | TODO |
+| F1-07 | [Assets base: personagens e inimigos](F1-nucleo/F1-07-assets-personagens-inimigos.md) | F0-01 | REVIEW |
 
 ## Fase 2 — Narrativa
 | ID | Feature | Depende de | Estado |

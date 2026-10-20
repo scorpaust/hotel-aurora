@@ -1,36 +1,32 @@
 # Funcionalidade Atual
 
-<!-- Ver especificação completa em context/features/F1-nucleo/F1-09-definicoes-configuraveis.md -->
+<!-- Ver especificação completa em context/features/F1-nucleo/F1-10-fluxos-nivel-gerador.md -->
 
-# F1-09 — Definições configuráveis de conteúdo
+# F1-10 — Fluxos de nível e gerador
 
 ## Estado
 
-DONE
+Em revisão (REVIEW) — à espera de teste/confirmação
 
 ## Objetivos
 
-Dar a inimigos, bosses, armadilhas, cutscenes, áudio e narrativa a mesma abordagem orientada a dados que `ItemDefinition`/`MemoryDefinition`/`DialogueGraph` já têm — para que cada ala da história se monte a partir de peças reutilizáveis.
+Descrever cada ala como uma sequência ordenada de "beats" (cutscene, exploração, inimigos, armadilhas, labirinto, interação narrativa, miniboss, bónus, boss) e dar uma ferramenta de Editor que monta a cena da ala a partir dessa sequência.
 
-- `EnemyDefinition`, `BossDefinition`, `TrapDefinition`, `CutsceneDefinition`, `MusicCueDefinition`/`SfxCueDefinition`/`VfxCueDefinition`, `NarrativeBeatDefinition` (SOs em `Aurora.Hotel`/`Aurora.Narrative`/`Aurora.Audio`).
-- Validador de Editor para ids duplicados/campos obrigatórios em falta.
+- `LevelBeatType`, `LevelBeat`, `LevelFlowDefinition` (SOs em `Aurora.Hotel`).
+- `RoomDefinition` (criado agora — só existia na tabela do `codespec.md`, não em código).
+- `LevelGeneratorWindow` (menu **Aurora/Level Generator**) + `LevelFlowValidator`, ambos em `Aurora.Editor`.
 
-**Não inclui:** o sistema de fluxos/gerador que os combina (F1-10, feature seguinte); lógica de IA (Fase 3+); conteúdo real de cada boss nomeado (Fase 5/6).
+**Não inclui:** geração procedimental em runtime (nunca existe); a lógica de jogo de cada beat; migração automática de alas já existentes.
 
 ## Critérios de aceitação
 
-- [x] As 9 classes de *Definition compilam e aparecem no menu de criação de assets.
-- [x] Pelo menos um asset de exemplo de cada tipo, criado e preenchido.
-- [x] `BossDefinition` com 2+ fases de exemplo mostra a lista ordenada corretamente no Inspector.
-- [x] Validador deteta um id duplicado proposital e reporta erro claro.
-- [x] Nenhuma destas classes introduz lógica de gameplay.
+- [x] `LevelFlowDefinition` com os 2 fluxos de exemplo, visíveis e editáveis no Inspector.
+- [x] `LevelGeneratorWindow` abre a partir do menu, lista os `LevelFlowDefinition` existentes, e ao escolher um + aplicar, instancia placeholders na cena ativa na ordem certa dos beats.
+- [x] Gerar duas vezes seguidas (fluxos diferentes) não deixa lixo da tentativa anterior nem GameObjects duplicados.
+- [x] Nenhum destes scripts é referenciado por `Aurora.Gameplay`/`Aurora.Hotel` em runtime (só Editor).
 
 ## Histórico
 
 <!-- Manter atualizado. Da mais antiga para a mais recente -->
 
-- 2026-10-20 — Pedida uma reconfiguração arquitetural: sistemas de conteúdo orientados a dados (inimigos/bosses/armadilhas/cutscenes/áudio/narrativa configuráveis, com propriedades herdadas) e um sistema de fluxos de nível + gerador no menu do Unity, antes de continuar a Etapa B da F1-01 (empurrar/puxar).
-- 2026-10-20 — Esclarecida a dúvida central antes de avançar: este sistema serve para construir a **mesma história fixa** mais depressa (não torna o jogo procedimental/variável), e as "armas" dos inimigos/bosses são objetos de identidade narrativos ligados à lanterna, não combate — mantém `codespec.md` §1 ("sem combate direto") intacto.
-- 2026-10-20 — Registadas duas novas features na Fase 1: F1-09 (definições configuráveis) e F1-10 (fluxos de nível + gerador), com F5-03/Fase 6 a passarem a depender de F1-10. `codespec.md` §5.4/§5.6 atualizado com o novo modelo de dados. Branch `feature/f1-09-definicoes-configuraveis` criada a partir de `main` (independente da F1-01, cujo Etapa B fica em pausa).
-- 2026-10-20 — F1-09 implementada: `EnemyDefinition`/`BossDefinition`/`TrapDefinition` (Hotel), `CutsceneDefinition`/`NarrativeBeatDefinition` (Narrative), `MusicCueDefinition`/`SfxCueDefinition`/`VfxCueDefinition` (Audio), mais `IContentDefinition`/`DialogueGraph`/`MemoryDefinition`/`GuestBookEntry` (Core, partilhados). `Aurora.Hotel` passou a poder referenciar `Aurora.Narrative`/`Aurora.Audio` (decisão de arquitetura registada no Registo da F1-09). Validador de ids duplicados/campos vazios, 11 assets de exemplo (incluindo um Boss com 2 fases), 28/28 testes a passar. Estado passa a REVIEW.
-- 2026-10-21 — Durante o teste de confirmação, encontrado e corrigido um bug à parte: a câmara do `Boot` tinha voltado a `depth 0` (empatada com a câmara das cenas), fazendo o Solid Color do Boot tapar a cena ativa ao dar Play — ecrã preto. Corrigido para `-100` outra vez (fix já feito uma vez na F0-03 mas nunca gravado na cena commitada). Validador confirmado em cima de dois assets reais criados pelo menu Create sem id preenchido (apanhados e corrigidos). Estado passa a `DONE`.
+- 2026-10-21 — Implementado na branch `feature/f1-10-fluxos-nivel-gerador` (a partir de `main`, já com F1-09 integrada). `LevelBeatType`/`LevelBeat`/`LevelFlowDefinition`/`RoomDefinition` em `Aurora.Hotel`; `LevelFlowValidator`/`LevelGeneratorWindow` em `Aurora.Editor` (que passou a referenciar `Aurora.Hotel`/`Aurora.Narrative` — só tooling, nunca no build do jogador). Placeholders de geração usam um sprite partilhado tingido por tipo de beat, em vez de 9 sprites separados. Geração testada duas vezes seguidas (via reflexão) sem deixar lixo. 2 fluxos de exemplo + 1 `RoomDefinition` de exemplo criados. 33/33 testes EditMode a passar (5 novos `LevelFlowTests`). Estado passa a REVIEW.

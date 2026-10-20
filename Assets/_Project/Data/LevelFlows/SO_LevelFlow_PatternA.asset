@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d75edd0ed7ec3b4cb1dc6f289d2f7df, type: 3}
+  m_Name: SO_LevelFlow_PatternA
+  m_EditorClassIdentifier: Aurora.Hotel::Aurora.Hotel.LevelFlowDefinition
+  _id: levelflow.example.pattern_a
+  _beats:
+  - _type: 0
+    _label: Abertura da ala
+    _enemies: []
+    _traps: []
+    _cutscene: {fileID: 11400000, guid: 7ed55f57dab1d74458428b86e4d99585, type: 2}
+    _boss: {fileID: 0}
+    _narrativeBeat: {fileID: 0}
+  - _type: 1
+    _label: Primeira exploracao
+    _enemies: []
+    _traps: []
+    _cutscene: {fileID: 0}
+    _boss: {fileID: 0}
+    _narrativeBeat: {fileID: 0}
+  - _type: 2
+    _label: Corredor dos zombies
+    _enemies:
+    - {fileID: 11400000, guid: 7bf17f5ee4d11434c896c757639bb77d, type: 2}
+    _traps: []
+    _cutscene: {fileID: 0}
+    _boss: {fileID: 0}
+    _narrativeBeat: {fileID: 0}
+  - _type: 3
+    _label: Chao instavel
+    _enemies: []
+    _traps:
+    - {fileID: 11400000, guid: ea97091c62e5e8a40b9d884caede7f5e, type: 2}
+    _cutscene: {fileID: 0}
+    _boss: {fileID: 0}
+    _narrativeBeat: {fileID: 0}
+  - _type: 4
+    _label: Labirinto de corredores
+    _enemies: []
+    _traps: []
+    _cutscene: {fileID: 0}
+    _boss: {fileID: 0}
+    _narrativeBeat: {fileID: 0}
+  - _type: 5
+    _label: Beatriz comenta
+    _enemies: []
+    _traps: []
+    _cutscene: {fileID: 0}
+    _boss: {fileID: 0}
+    _narrativeBeat: {fileID: 11400000, guid: 697b2f63ec9473747a8413a2f0a31f5e, type: 2}
+  - _type: 8
+    _label: Confronto final
+    _enemies: []
+    _traps: []
+    _cutscene: {fileID: 0}
+    _boss: {fileID: 11400000, guid: a8ed6cd9871efde4fb67395ba6ea5615, type: 2}
+    _narrativeBeat: {fileID: 0}

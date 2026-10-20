@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5de52d657b4172c45891e3aabed4b88b, type: 3}
+  m_Name: SO_Trap_Example
+  m_EditorClassIdentifier: Aurora.Hotel::Aurora.Hotel.TrapDefinition
+  _id: trap.example.creakyfloor
+  _displayName: Soalho que range (exemplo)
+  _type: 1
+  _trigger: "jogador pisa a t\xE1bua solta"
+  _intensity: 0
+  _vfxCue: {fileID: 11400000, guid: 82fac3f3eb186624d9f90958b8fa880d, type: 2}
+  _sfxCue: {fileID: 11400000, guid: ca38ea4bb6f3b0847858309048c72c22, type: 2}
+  _cooldownSeconds: 3

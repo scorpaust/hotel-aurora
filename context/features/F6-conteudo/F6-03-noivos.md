@@ -7,7 +7,7 @@ Quarta ala. Introduz o **loop**: um casamento que se repete e que o jogador tem 
 ## Contexto na história
 "Os Noivos, unidos por um casamento que se repete há décadas e separados por um segredo que nenhum deles quer recordar."
 
-> **Decisão a tomar com o Dinis:** qual é o segredo e se a resolução liberta os dois, um ou nenhum.
+> **Decisão a tomar antes de implementar:** qual é o segredo e se a resolução liberta os dois, um ou nenhum.
 
 ## Âmbito
 **Inclui:** `SCN_Ballroom` (salão, capela do hotel, camarins, varanda), loop de ~3 min com estado que reinicia, dois "bosses" ligados, fragmento 5/5 do Tomás, memória dos Noivos.

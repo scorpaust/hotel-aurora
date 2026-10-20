@@ -7,7 +7,7 @@ Primeira ala completa e o primeiro boss. Fecha o vertical slice (~40 min com o p
 ## Contexto na história
 "A Governanta, que cose hóspedes aos colchões para garantir que nunca abandonam os quartos." Antes de ser monstro, era alguém que cuidava do hotel e de quem lá dormia — e que confundiu cuidar com prender.
 
-> **Decisão a tomar com o Dinis antes de implementar:** quem era a Governanta (nome, perda, o que o hotel lhe ofereceu). Proposta: uma camareira que perdeu um filho que fugiu de casa e nunca voltou; o hotel prometeu-lhe que "ninguém volta a partir". Não implementar a história de fundo sem aprovação.
+> **Decisão a tomar antes de implementar:** quem era a Governanta (nome, perda, o que o hotel lhe ofereceu). Proposta: uma camareira que perdeu um filho que fugiu de casa e nunca voltou; o hotel prometeu-lhe que "ninguém volta a partir". Não implementar a história de fundo sem aprovação.
 
 ## Âmbito
 **Inclui:** `SCN_Rooms` (2 andares de quartos, rouparia, corredor de serviço, elevador de roupa), a Governanta (patrulha + perseguição + confronto), hóspedes cosidos aos colchões (ambiente/puzzle), fragmento 2/5 do Tomás, memória da Governanta, entradas do livro.

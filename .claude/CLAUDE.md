@@ -18,7 +18,7 @@ Este ficheiro é só o ponto de entrada. As regras vivem em `context/`, na raiz 
 
 ## Como trabalhar numa feature
 
-1. Lê a feature indicada pelo Dinis (ou a primeira com estado `TODO` no README).
+1. Lê a feature indicada (ou a primeira com estado `TODO` no README).
 2. Confirma as dependências marcadas como `DONE`. Se faltar alguma, pára e diz.
 3. Propõe um plano curto (ficheiros a criar/alterar) antes de escrever código.
 4. Implementa em passos pequenos; compila em batchmode depois de cada passo (ver `rules.md` §5).

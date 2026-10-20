@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c2678ea999e0694cb831d3bd121f107, type: 3}
+  m_Name: SO_Boss_Example
+  m_EditorClassIdentifier: Aurora.Hotel::Aurora.Hotel.BossDefinition
+  _id: boss.example.governanta
+  _baseEnemy: {fileID: 11400000, guid: 7bf17f5ee4d11434c896c757639bb77d, type: 2}
+  _phases:
+  - _name: "Persegui\xE7\xE3o pelos corredores"
+    _lanternPuzzleDescription: Apontar a lanterna ao espelho para revelar o rosto
+    _transitionCondition: quartos.governanta.vista
+  - _name: Confronto final
+    _lanternPuzzleDescription: "Manter o foco da lanterna at\xE9 ela parar"
+    _transitionCondition: quartos.governanta.libertada
+  _recoveredMemory: {fileID: 11400000, guid: a5b6cea8d8cbe5e44aa49833bb6590b1, type: 2}
+  _guestBookEntry: {fileID: 11400000, guid: 8701d41abfdf2db4f8f8b7a94d89bd4e, type: 2}

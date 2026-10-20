@@ -100,11 +100,12 @@ Dependências entre assemblies (só neste sentido):
 Core ← Input ← Gameplay ← Hotel
 Core ← Persistence
 Core ← Narrative ← Gameplay
-Core ← Audio
+Core ← Narrative ← Hotel
+Core ← Audio ← Hotel
 Core ← Platform ← Platform.Steam
 UI → (Core, Input, Narrative, Gameplay via eventos)
 ```
-`Core` não depende de nada do projeto. `UI` nunca é referenciado por gameplay.
+`Core` não depende de nada do projeto. `UI` nunca é referenciado por gameplay. `Hotel` pode referenciar `Narrative` e `Audio` (bosses/armadilhas apontam para memórias, diálogos e cues de áudio/vfx — ver §5.4/§5.6), mas `Narrative` e `Audio` nunca referenciam `Hotel`.
 
 ---
 
@@ -138,14 +139,30 @@ Registo simples em `Aurora.Core.Services` (service locator explícito, sem frame
 | `ItemDefinition` | Ferramentas e objetos-chave (id, nome localizado, ícone, se é ferramenta). |
 | `MemoryDefinition` | Memória recuperável (id, ala, fragmentos, cutscene associada, efeito na história). |
 | `DialogueGraph` | Nós de diálogo, condições sobre flags, efeitos. |
-| `HotelEventDefinition` | Evento do hotel vivo (tipo, gatilho, intensidade, cooldown). |
-| `RoomDefinition` | Sala: ligações, spawn points, se tem camada do passado. |
+| `HotelEventDefinition` | Evento do hotel vivo *ambiente* (tipo, gatilho, intensidade, cooldown) — não confundir com `TrapDefinition` abaixo, que é um obstáculo colocado numa sala. |
+| `RoomDefinition` | Sala: ligações, spawn points, se tem camada do passado, `LevelFlowDefinition` associado (§5.6). |
 | `GuestBookEntry` | Entradas do livro de hóspedes (desbloqueáveis, colecionáveis). |
+| `EnemyDefinition` | Inimigo genérico: id, nome, sprites/Animator Controller, nível de dificuldade, objeto de identidade (prop visual ligado à revelação da lanterna — nunca uma arma de combate), parâmetros base de comportamento (velocidade, deteção — hooks para a IA da Fase 3, ainda sem lógica). |
+| `BossDefinition` | Estende `EnemyDefinition`: número de fases, dados por fase (comportamento, puzzle da lanterna, condição de transição de fase), `MemoryDefinition` recuperada ao resolver, `GuestBookEntry` associado. |
+| `TrapDefinition` | Obstáculo/armadilha colocável numa sala: tipo, gatilho, intensidade (narrativa — sugestão de perigo, nunca dano real), referências VFX/SFX, cooldown. |
+| `CutsceneDefinition` | Referência a um Timeline asset + condições de disparo. |
+| `MusicCueDefinition` / `SfxCueDefinition` / `VfxCueDefinition` | Referências a clips/prefabs de áudio e partículas + parâmetros (volume, loop, etc.); pensados para o `IAudioService` (F4-03). |
+| `NarrativeBeatDefinition` | Fino: referencia um `DialogueGraph` existente + legendas; usado como beat de um `LevelFlowDefinition`. |
+| `LevelFlowDefinition` | Lista ordenada de beats (`LevelBeatType` + as *Definition concretas de cada um) — ver §5.6. |
 
 Todos os SO têm `id` estável (string) usado no save. **Nunca** gravar referências diretas a assets.
 
 ### 5.5 Flags do mundo
 `WorldFlags` = dicionário `string → int`. Convenção de chaves: `ala.objeto.estado` (ex.: `quartos.governanta.libertada`). Constantes geradas em `FlagKeys.cs` por ferramenta de Editor a partir de um SO de registo.
+
+### 5.6 Fluxos de nível e gerador
+
+Cada ala do hotel conta sempre a **mesma história fixa** (ver §1 e a descrição completa do projeto) — este sistema não gera conteúdo ao calhas nem varia entre jogos. É só a forma de **montar** cada ala a partir de peças de dados reutilizáveis, em vez de código/cenas escritos à mão do zero para cada uma.
+
+- `LevelBeatType` (enum): `Cutscene`, `Exploration`, `EnemyEncounter`, `TrapGauntlet`, `Maze`, `NarrativeInteraction`, `MiniBoss`, `BonusLevel`, `Boss`.
+- `LevelFlowDefinition` (SO): sequência ordenada de beats; cada beat aponta para a(s) *Definition concreta(s) a usar nesse ponto (ex.: um beat `EnemyEncounter` aponta para uma lista de `EnemyDefinition`). Vários fluxos podem existir como assets reutilizáveis entre alas.
+- Cada `RoomDefinition`/ala tem um `LevelFlowDefinition` como propriedade — é aí que se escolhe **qual** sequência de beats essa ala usa.
+- `LevelGeneratorWindow` (`Aurora.Editor`, menu **Aurora/Level Generator**): ferramenta de autoria assistida. Dado um `LevelFlowDefinition` + as *Definition concretas escolhidas, monta/scaffolda a cena da ala (prefabs instanciados pela ordem dos beats, triggers de transição entre eles). Corre só no Editor, nunca em runtime — não é um gerador procedimental do jogo em si.
 
 ---
 

@@ -7,7 +7,7 @@ Terceira ala. Introduz **água e nível variável**: quartos inundados e uma pis
 ## Contexto na história
 "O Nadador do Fundo, que percorre uma piscina sem fundo, ligada aos quartos inundados do hotel." Beatriz despede-se no fim a pedir "uma piscina normal".
 
-> **Decisão a tomar com o Dinis:** quem era o Nadador e o que procurava no fundo.
+> **Decisão a tomar antes de implementar:** quem era o Nadador e o que procurava no fundo.
 
 ## Âmbito
 **Inclui:** `SCN_Pool` (piscina interior, balneários, casa das máquinas, quartos inundados), sistema de nível de água, o Nadador, fragmento 4/5 do Tomás, memória do Nadador.

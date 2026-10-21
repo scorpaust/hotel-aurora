@@ -145,6 +145,79 @@ namespace Aurora.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator WalkingThroughStairZoneWithoutVerticalInput_NeverEngagesStairs()
+        {
+            const int triggerLayer = 11;
+            var animator = _instance.GetComponent<Animator>();
+            var startPos = _instance.transform.position;
+
+            var zoneObject = new GameObject("TestLadderPassThrough") { layer = triggerLayer, tag = "Stairs" };
+            var zoneCollider = zoneObject.AddComponent<BoxCollider2D>();
+            zoneCollider.isTrigger = true;
+            zoneCollider.size = new Vector2(1f, 2.2f);
+            zoneObject.transform.position = startPos + new Vector3(0.3f, 1f, 0f);
+            var zone = zoneObject.AddComponent<StairZone>();
+            var so = new SerializedObject(zone);
+            so.FindProperty("_kind").enumValueIndex = (int)StairKind.Ladder;
+            so.FindProperty("_bottomLocalOffset").vector2Value = new Vector2(0f, -1f);
+            so.FindProperty("_topLocalOffset").vector2Value = new Vector2(0f, 1f);
+            so.FindProperty("_climbSpeed").floatValue = 4f;
+            so.ApplyModifiedPropertiesWithoutUndo();
+
+            Press(_keyboard.dKey);
+            for (var i = 0; i < 60; i++)
+            {
+                yield return null;
+                Assert.IsFalse(animator.GetBool("OnStairs"), "Plain horizontal walking through a StairZone must never hijack movement.");
+            }
+            Release(_keyboard.dKey);
+
+            Object.Destroy(zoneObject);
+
+            Assert.Greater(_instance.transform.position.x, startPos.x,
+                "Should have walked straight through the zone's footprint like normal ground.");
+        }
+
+        [UnityTest]
+        public IEnumerator PinnedAtTopOfLadder_WalkingSideways_LeavesTheStair()
+        {
+            const int triggerLayer = 11;
+            var animator = _instance.GetComponent<Animator>();
+            var startPos = _instance.transform.position;
+
+            var zoneObject = new GameObject("TestLadderSidewaysExit") { layer = triggerLayer, tag = "Stairs" };
+            var zoneCollider = zoneObject.AddComponent<BoxCollider2D>();
+            zoneCollider.isTrigger = true;
+            zoneCollider.size = new Vector2(1f, 2.2f);
+            zoneObject.transform.position = startPos + new Vector3(0f, 1f, 0f);
+            var zone = zoneObject.AddComponent<StairZone>();
+            var so = new SerializedObject(zone);
+            so.FindProperty("_kind").enumValueIndex = (int)StairKind.Ladder;
+            so.FindProperty("_bottomLocalOffset").vector2Value = new Vector2(0f, -1f);
+            so.FindProperty("_topLocalOffset").vector2Value = new Vector2(0f, 1f);
+            so.FindProperty("_climbSpeed").floatValue = 4f;
+            so.ApplyModifiedPropertiesWithoutUndo();
+
+            Press(_keyboard.wKey);
+            for (var i = 0; i < 30; i++)
+                yield return null;
+            Release(_keyboard.wKey);
+
+            // Reached the top and let go of Up — without sideways-exit this used to pin the
+            // player in stair mode forever, unresponsive to A/D (reported as "fica preso no ar").
+            Assert.IsTrue(animator.GetBool("OnStairs"), "Sanity check: should still be at the top of the stair here.");
+
+            Press(_keyboard.dKey);
+            for (var i = 0; i < 10; i++)
+                yield return null;
+            Release(_keyboard.dKey);
+
+            Object.Destroy(zoneObject);
+
+            Assert.IsFalse(animator.GetBool("OnStairs"), "Pushing sideways at the top must free the player from stair mode.");
+        }
+
+        [UnityTest]
         public IEnumerator HoldingInteractAndMove_PushesAPushableBox()
         {
             const int environmentLayer = 10;

@@ -25,6 +25,11 @@ namespace Aurora.Gameplay
         // slip through on the very next cast.
         private const float SkinWidth = 0.02f;
 
+        // How far Move's vertical axis has to be pushed to count as "wants to climb/leave a
+        // stair" — matches spec item 5 ("Move vertical entra na escada"): touching a StairZone
+        // alone must never hijack plain horizontal walking through its footprint.
+        private const float StairIntentDeadzone = 0.3f;
+
         [SerializeField] private PlayerMovementConfig _config = null!;
         [SerializeField] private LayerMask _collisionMask;
 
@@ -40,7 +45,13 @@ namespace Aurora.Gameplay
 
         private Vector2 _standingColliderSize;
         private Vector2 _standingColliderOffset;
-        private StairZone? _stairZone;
+
+        /// <summary>The StairZone the player's collider currently physically overlaps, if any — not necessarily being climbed.</summary>
+        private StairZone? _overlappingStairZone;
+
+        /// <summary>The StairZone currently being climbed (a subset of overlapping: requires vertical intent to engage).</summary>
+        private StairZone? _activeStairZone;
+
         private bool _isPushing;
 
         private void Awake()
@@ -64,9 +75,15 @@ namespace Aurora.Gameplay
 
             var move = _input.Gameplay.Move.ReadValue<Vector2>();
 
-            if (_stairZone != null)
+            if (_activeStairZone != null)
             {
-                TickOnStairs(_stairZone, move.y);
+                TickOnStairs(_activeStairZone, move.x, move.y);
+            }
+            else if (_overlappingStairZone != null && Mathf.Abs(move.y) > StairIntentDeadzone)
+            {
+                _activeStairZone = _overlappingStairZone;
+                _motor.EnterStairs(_activeStairZone.ProjectProgress(_rigidbody.position));
+                TickOnStairs(_activeStairZone, move.x, move.y);
             }
             else
             {
@@ -156,16 +173,30 @@ namespace Aurora.Gameplay
                 _rigidbody.MovePosition(_rigidbody.position + direction * allowedDistance);
         }
 
-        private void TickOnStairs(StairZone zone, float moveY)
+        private void TickOnStairs(StairZone zone, float moveX, float moveY)
         {
             _isPushing = false;
+
+            // Horizontal intent always means "let me off" — from anywhere on the stair, not
+            // just exactly at an end. Climb progress rarely lands on exactly 0/1 (frame timing
+            // varies), so gating sideways-exit on an exact clamp left the player stuck mid-climb,
+            // unresponsive to A/D, whenever they let go of Up/Down without reaching the tip.
+            if (Mathf.Abs(moveX) > StairIntentDeadzone)
+            {
+                _activeStairZone = null;
+                _motor.ExitStairs();
+                return;
+            }
+
             _motor.TickOnStairs(moveY, zone.ClimbSpeed, zone.Length, Time.deltaTime);
 
-            // Clamped progress means the top/bottom anchor was reached; still pushing further
-            // in that direction means the player wants off the stair, not to stay pinned there.
-            if ((_motor.StairProgress >= 1f && moveY > 0f) || (_motor.StairProgress <= 0f && moveY < 0f))
+            // Still pushing further past the top/bottom anchor also means the player wants off.
+            var atTop = _motor.StairProgress >= 1f;
+            var atBottom = _motor.StairProgress <= 0f;
+
+            if ((atTop && moveY > 0f) || (atBottom && moveY < 0f))
             {
-                _stairZone = null;
+                _activeStairZone = null;
                 _motor.ExitStairs();
                 return;
             }
@@ -175,24 +206,20 @@ namespace Aurora.Gameplay
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            if (_stairZone != null)
-                return;
-
             if (other.TryGetComponent<StairZone>(out var zone))
-            {
-                _stairZone = zone;
-                _motor.EnterStairs(zone.ProjectProgress(_rigidbody.position));
-            }
+                _overlappingStairZone = zone;
         }
 
         private void OnTriggerExit2D(Collider2D other)
         {
-            if (_stairZone == null)
+            if (!other.TryGetComponent<StairZone>(out var zone) || zone != _overlappingStairZone)
                 return;
 
-            if (other.TryGetComponent<StairZone>(out var zone) && zone == _stairZone)
+            _overlappingStairZone = null;
+
+            if (_activeStairZone == zone)
             {
-                _stairZone = null;
+                _activeStairZone = null;
                 _motor.ExitStairs();
             }
         }

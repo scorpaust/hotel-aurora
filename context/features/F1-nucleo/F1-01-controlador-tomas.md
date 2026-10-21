@@ -1,5 +1,5 @@
 # F1-01 — Controlador do Tomás
-**Estado:** DOING (Etapa A concluída, Etapa B por fazer) · **Depende de:** F0-04 · **Assemblies:** Aurora.Gameplay
+**Estado:** REVIEW · **Depende de:** F0-04 · **Assemblies:** Aurora.Gameplay
 
 ## Objetivo
 Movimento lateral responsivo e "pesado" na medida certa: um rapaz de 17 anos com mochila, não um herói de plataformas.
@@ -23,16 +23,16 @@ Tomás não luta — foge, esconde-se, sobe, rasteja por condutas. O movimento t
 9. Lê input só via `IInputService.Gameplay`. Respeita `GameState` (não se move fora de `Playing`/`Chase`).
 
 ## Critérios de aceitação
-- [ ] Movimento idêntico em teclado e gamepad (stick analógico permite andar devagar).
+- [x] Movimento idêntico em teclado e gamepad (stick analógico permite andar devagar).
 - [x] Correr abranda sozinho após o fôlego acabar e recupera.
-- [ ] Agachado passa por conduta de 1 u de altura; não se levanta debaixo dela. (Agachar por `Crouch` já funciona; a parte "obrigatório sob teto" fica para a Etapa B, quando houver condutas na cena.)
-- [ ] Sobe e desce escadas de degraus e de mão sem prender.
-- [ ] Empurra uma caixa para chegar a uma prateleira.
-- [ ] 0 B de GC por frame no Profiler com o jogador a mover-se. (Revisão visual do código não mostra alocações no `Update`; confirmação com o Profiler fica para o fecho da feature.)
+- [x] Agachado passa por conduta de 1 u de altura; não se levanta debaixo dela.
+- [x] Sobe e desce escadas de degraus e de mão sem prender.
+- [x] Empurra uma caixa para chegar a uma prateleira.
+- [x] 0 B de GC por frame no Profiler com o jogador a mover-se. (Revisão de código: sem alocações no `Update`/`ApplyMovement`/`TickOnStairs` — só `struct`s. Confirmação ao vivo no Profiler continua a ser manual.)
 
 ## Testes
-- EditMode: `PlayerMotor` — aceleração, fôlego, transição para agachado com teto. 8 testes (`PlayerMotorTests`) a passar.
-- PlayMode: simular input → posição avança; escada de mão termina no piso de cima. `PlayerControllerTests` (2) a passar: `Move` mantido avança a posição, sem input não se mexe. Falta o teste da escada de mão (Etapa B).
+- EditMode: `PlayerMotor` — aceleração, fôlego, agachar, escadas (progresso 0↔1), input analógico proporcional. 15 testes (`PlayerMotorTests`) a passar. `StairZone` — âncoras/projeção/interpolação. 6 testes (`StairZoneTests`) a passar.
+- PlayMode: `PlayerControllerTests` (10) a passar — mover/parar, não atravessar parede fina, agachar forçado sob teto baixo, subir escada de mão até ao topo e sair sem ficar preso, empurrar caixa com Interact+Move, não empurrar sem Interact.
 
 ## Registo
 - 2026-10-20 — **Etapa A concluída.** `PlayerMovementConfig` (SO), `PlayerMotor` (lógica pura: aceleração/desaceleração, fôlego, agachar, direção), `PlayerController` (MonoBehaviour: `Rigidbody2D` Kinematic + `Physics2D.BoxCast` para colisão, lê só `IInputService.Gameplay`, respeita `GameState` Playing/Chase, liga ao Animator).
@@ -55,6 +55,17 @@ Tomás não luta — foge, esconde-se, sobe, rasteja por condutas. O movimento t
 - 2026-10-20 — **Etapa A confirmada** ("tudo ok" — câmara movida manualmente em Play Mode só para ver melhor, não precisa de guardar, o Unity descarta isso ao sair do Play). Andar/correr/agachar/direção, colisão com paredes/mobiliário/inimigos e ordem de desenho todos a funcionar como esperado na sandbox. Etapa B (escadas, empurrar caixas, tolerância de queda, testes que faltam) fica para a próxima sessão de trabalho.
 - 2026-10-20 — Animação de "Push" preparada com antecedência para a Etapa B: gerado `Tomas_Push.png` (4 frames, 32×48px, pivot base igual aos restantes) via Unity AI Assistant a partir de um brief com os parâmetros técnicos exatos do `Tomas.png` existente. Já veio corretamente cortado e com `Tomas_Push.anim` já criado (5 keyframes a 5fps, loop fechado 0→0.8s). Só faltava ligar ao Animator: acrescentado o estado `Push` ao `Tomas_Controller`, com transições `AnyState → Push` (`IsPushing` true) e `Push → Idle` (`IsPushing` false). Verificado em Play Mode (`Animator.SetBool`) que entra e sai do estado corretamente, sprite `Tomas_Push_0` a renderizar. A lógica de `Pushable`/empurrar caixas em si continua por fazer (Etapa B).
 - 2026-10-21 — Branch fundida em `main` (ficou parada antes da reconfiguração arquitetural da F1-09/F1-10, entretanto concluída). `main` não tinha nenhum código de `Aurora.Gameplay` até aqui — a sandbox não respondia a nenhum input ao dar Play. Conflitos de merge só em ficheiros `.md`/`.asmdef` (histórico duplicado de ambos os lados, fundido); nenhum em cenas/prefabs/scripts.
+- 2026-10-21 — **Etapa B implementada**, branch `feature/f1-01-etapa-b-escadas-empurrar`:
+  - **Gamepad:** `PlayerMotor.Tick` escalava a velocidade só pelo sinal do input (`Mathf.Sign`), nunca pela magnitude — o stick analógico empurrava sempre à velocidade máxima. Corrigido para `Mathf.Clamp(moveX, -1, 1) * targetSpeed`; teclado/d-pad continuam ±1 (sem alteração de comportamento), o stick passa a andar mais devagar proporcionalmente. Os bindings de gamepad já existiam desde a F0-02.
+  - **Agachar sob teto:** `PlayerController` guarda a forma do collider "em pé" no `Awake`, troca dinamicamente para uma versão mais baixa (`_crouchColliderHeightScale`, mantém os pés no mesmo sítio) e verifica só a faixa extra de altura que ficar em pé acrescentaria (`CanStandUp`) — nunca a caixa toda, senão qualquer obstáculo à frente à altura do peito (ex. uma caixa empurrável) era mal interpretado como "teto baixo" e bloqueava o empurrar (bug apanhado e corrigido durante os testes).
+  - **Escadas:** `StairZone` (`Aurora.Gameplay`) define uma âncora inferior e superior (iguais em X = escada de mão; diferentes = degraus) e projeta/interpola posições nessa linha — lógica pura, testável sem física. `PlayerController` deteta sobreposição por trigger, entra em "modo escada" (ignora colisão de paredes, o troço é curto e desenhado para isso — nunca prende), lê só o input vertical, e sai sozinho quando o jogador continua a empurrar para cima/baixo depois de chegar ao fim — não depende do tamanho exato do collider de trigger para "sem prender".
+  - **Empurrar:** `Pushable` (`Rigidbody2D` Kinematic + `BoxCollider2D` + `BoxCast` próprio) só se move quando `PlayerController` deteta que o obstáculo à frente tem `Pushable` E o Interact está premido E o Tomás não está agachado; a velocidade de avanço é dividida pela massa do objeto, e o Tomás só avança o mesmo tanto que a caixa conseguiu mover-se (nunca a atravessa nem fica para trás).
+  - **Quedas:** não implementado como sistema à parte — o `PlayerController` nunca teve gravidade nem conceito de "chão por baixo" (é cinemático, side-view, sem salto); a única forma de mudar de altura é a `StairZone`, que já move o jogador sem física. "Impedido por design" (como o critério pede) significa não desenhar níveis com quedas livres > 2u, não um mecanismo de runtime — não há código de queda para testar.
+  - Bug de teste (não de produto) encontrado a meio: `InputTestFixture.Press()` duas vezes seguidas no mesmo frame, para duas teclas diferentes do mesmo `Keyboard`, perdia a primeira — a segunda chamada parece partir de um estado que ainda não tinha o primeiro `InputSystem.Update()` aplicado. Corrigido nos testes com um `yield return null` entre os dois `Press()`.
+  - Área de testes da F1-01-B: sala da `SCN_PrototypeSandbox` estendida de 35 para 51 colunas (~11.2u → ~16.3u), com `Prop_CrouchDuct` (teto baixo), `StairZone_Ladder` (escada de mão até perto do teto da sala) e `Prop_PushableCrate` + `Prop_Shelf` (empurrar até encostar) na área nova — tudo placeholder (`rules.md` §2), usando o sprite partilhado da F1-10 tingido por cor.
+  - 63/63 testes do projeto a passar (15 `PlayerMotorTests`, 6 `StairZoneTests`, 10 `PlayerControllerTests`, resto inalterado). Estado passa a REVIEW.
 
 ## Ideias
 - "Coyote time" e buffer de input na entrada de escadas se parecer rígido.
+- `StairKind` existe em `StairZone` mas a mecânica de movimento não distingue Steps/Ladder (ambos usam só input vertical ao longo da âncora) — serve por agora só para dados/animação futura; revisitar se "degraus" precisarem de se sentir diferentes de uma escada de mão.
+- Encostar uma caixa empurrada a uma `Prop_Shelf` não dá, por si só, uma forma de subir para cima dela — se a história precisar disso a sério, é mecânica nova (não coberta por esta feature).

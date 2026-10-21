@@ -10,6 +10,7 @@
         "Aurora.Hotel",
         "Aurora.Narrative",
         "Aurora.Audio",
+        "Aurora.Gameplay",
         "Unity.InputSystem"
     ],
     "includePlatforms": [

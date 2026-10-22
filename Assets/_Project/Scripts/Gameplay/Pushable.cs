@@ -12,6 +12,13 @@ namespace Aurora.Gameplay
     [RequireComponent(typeof(BoxCollider2D))]
     public sealed class Pushable : MonoBehaviour
     {
+        // Same reasoning as PlayerController's SkinWidth: Physics2D.queriesStartInColliders is
+        // off project-wide, so a cast whose origin already touches a collider ignores it — once
+        // the box came to rest exactly flush against something (zero gap), the very next push
+        // would miss that collider entirely and slide straight into/through it. Casting a little
+        // further and clamping the allowed distance keeps a permanent sliver of a gap instead.
+        private const float SkinWidth = 0.02f;
+
         [Tooltip("Higher mass pushes slower: push speed is divided by this.")]
         [SerializeField] private float _mass = 1f;
 
@@ -35,8 +42,8 @@ namespace Aurora.Gameplay
                 return 0f;
 
             var origin = _rigidbody.position + _collider.offset;
-            var hit = Physics2D.BoxCast(origin, _collider.size, 0f, direction, distance, _collisionMask);
-            var allowed = hit.collider != null ? Mathf.Max(0f, hit.distance) : distance;
+            var hit = Physics2D.BoxCast(origin, _collider.size, 0f, direction, distance + SkinWidth, _collisionMask);
+            var allowed = hit.collider != null ? Mathf.Max(0f, hit.distance - SkinWidth) : distance;
 
             if (allowed > 0f)
                 _rigidbody.MovePosition(_rigidbody.position + direction * allowed);

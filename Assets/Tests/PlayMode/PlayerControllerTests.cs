@@ -250,6 +250,52 @@ namespace Aurora.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator PushingBoxIntoWall_NeverSlidesInsideIt()
+        {
+            const int environmentLayer = 10;
+
+            var boxObject = new GameObject("TestPushableBoxAgainstWall") { layer = environmentLayer };
+            boxObject.AddComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Kinematic;
+            var boxCollider = boxObject.AddComponent<BoxCollider2D>();
+            boxCollider.size = new Vector2(0.4f, 0.4f);
+            var boxStartX = _instance.transform.position.x + 0.5f;
+            boxObject.transform.position = new Vector3(boxStartX, _instance.transform.position.y, 0f);
+            var pushable = boxObject.AddComponent<Pushable>();
+            var so = new SerializedObject(pushable);
+            so.FindProperty("_mass").floatValue = 1f;
+            so.FindProperty("_collisionMask").intValue = 1 << environmentLayer;
+            so.ApplyModifiedPropertiesWithoutUndo();
+
+            // A wall just ahead of the box, close enough that pushing reaches it quickly and
+            // then keeps bumping against it for the rest of the hold — this is exactly the
+            // "already flush, cast again" case that tunnels without a skin-width margin.
+            var wallX = boxStartX + 0.3f;
+            var wall = new GameObject("TestWallForBox") { layer = environmentLayer };
+            var wallCollider = wall.AddComponent<BoxCollider2D>();
+            wallCollider.size = new Vector2(0.05f, 1f);
+            wall.transform.position = new Vector3(wallX, _instance.transform.position.y, 0f);
+
+            Press(_keyboard.eKey);
+            yield return null;
+            Press(_keyboard.dKey);
+            // Walking at ~2.2 u/s for 3s covers ~6.6 units — the box only needs to travel ~0.1u
+            // to reach the wall, so this holds it bumping against the wall for most of the time.
+            for (var i = 0; i < 180; i++)
+                yield return null;
+            Release(_keyboard.dKey);
+            Release(_keyboard.eKey);
+
+            var boxRightEdge = boxObject.transform.position.x + boxCollider.size.x / 2f;
+            var wallLeftEdge = wall.transform.position.x - wallCollider.size.x / 2f;
+
+            Object.Destroy(boxObject);
+            Object.Destroy(wall);
+
+            Assert.LessOrEqual(boxRightEdge, wallLeftEdge + 0.001f,
+                "The box must stop flush against the wall, never slide inside it.");
+        }
+
+        [UnityTest]
         public IEnumerator HoldingMoveWithoutInteract_DoesNotPushABox()
         {
             const int environmentLayer = 10;

@@ -37,3 +37,4 @@ O próprio edifício é um antagonista. Um diretor de eventos dispara armadilhas
 
 ## Ideias
 - Eventos que respondem à forma de jogar (quem usa muito a lanterna vê mais espelhos).
+- A mobília decorativa da `SCN_PrototypeSandbox` (F1-08, Registo 2026-10-24) já tem `BoxCollider2D isTrigger` na layer `Trigger` só por não bloquear o jogador — podem servir de gatilho de exemplo para sustos/sugestões ambientais sem reconstruir a cena.

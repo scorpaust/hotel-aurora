@@ -113,6 +113,7 @@ UI → (Core, Input, Narrative, Gameplay via eventos)
 
 ### 5.1 Arranque
 - `Boot.unity` contém `GameBootstrap`, que cria e regista os serviços por ordem e depois carrega `MainMenu` aditivamente.
+- O mesmo `GameObject` tem também `PlatformBootstrap` (`Aurora.Platform`), que regista `IPlatformServices` em `Start()` — nunca em `Awake()`, para correr sempre depois do `Services.Reset()` do `GameBootstrap`, já que `Aurora.Input` não referencia `Aurora.Platform` (ver §4) e por isso não pode registar este serviço diretamente.
 - Em Editor, ao dar Play em qualquer cena, um `[RuntimeInitializeOnLoadMethod]` garante que `Boot` é carregada primeiro (play-from-anywhere).
 
 ### 5.2 Serviços

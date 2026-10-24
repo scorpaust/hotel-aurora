@@ -6,7 +6,7 @@
 
 ## Estado
 
-Em revisão (REVIEW) — Etapa A e B concluídas, à espera de teste/confirmação
+DONE
 
 ## Objetivos
 
@@ -39,3 +39,5 @@ Movimento lateral responsivo e "pesado" na medida certa: um rapaz de 17 anos com
 - 2026-10-20 — Etapa A implementada e testada: `PlayerMovementConfig`, `PlayerMotor` (8 testes EditMode a passar — aceleração, fôlego a abrandar e recuperar, agachar, direção), `PlayerController` (2 testes PlayMode a passar — Move avança a posição, sem input não se mexe). `PlayerController` aplicado ao prefab `PFB_TomasPreview`. 36/36 testes do projeto a passar.
 - 2026-10-21 — Branch `feature/f1-01-controlador-tomas` finalmente fundida em `main` (tinha ficado parada antes da reconfiguração arquitetural da F1-09/F1-10, entretanto concluída). Até aqui, `main` não tinha nenhum código de `Aurora.Gameplay` — por isso o sandbox não respondia a nenhum input ao dar Play. Resolvido o merge (conflitos só em ficheiros `.md`/`.asmdef`, nenhum em cenas/prefabs). Etapa B continua por fazer.
 - 2026-10-21 — Etapa B implementada na branch `feature/f1-01-etapa-b-escadas-empurrar`: `StairZone` (escadas de mão e degraus, movimento por interpolação numa linha, sem física — nunca prende), `Pushable` (empurrar com Interact+Move, respeitando massa e colisão própria), agachar obrigatório sob teto baixo (verificação só da faixa de "altura extra", para não confundir obstáculos à frente com tetos), e correção do input analógico (o stick do gamepad já podia andar devagar, mas o código só olhava para o sinal, não a magnitude). Área de teste nova na `SCN_PrototypeSandbox` (sala estendida, conduta, escada, caixa empurrável). 63/63 testes do projeto a passar. Estado passa a REVIEW.
+- 2026-10-21/22 — Dois rounds de bugs reais reportados ao testar e corrigidos: a escada sequestrava o movimento horizontal (entrar/sair mal condicionados a intenção vertical) e a caixa empurrada tunelava para dentro de obstáculos (faltava a mesma margem de segurança já usada no jogador). 66/66 testes a passar.
+- 2026-10-24 — Confirmado a funcionar. Fricção de teste apontada (câmara fixa, é preciso deslocar o Tomás/câmara manualmente para testar áreas longe do spawn) — não é bug da F1-01, fica para a F1-02 (câmara a seguir o jogador). Estado passa a `DONE`.

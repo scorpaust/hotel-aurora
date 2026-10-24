@@ -1,5 +1,5 @@
 # F1-01 — Controlador do Tomás
-**Estado:** REVIEW · **Depende de:** F0-04 · **Assemblies:** Aurora.Gameplay
+**Estado:** DONE · **Depende de:** F0-04 · **Assemblies:** Aurora.Gameplay
 
 ## Objetivo
 Movimento lateral responsivo e "pesado" na medida certa: um rapaz de 17 anos com mochila, não um herói de plataformas.
@@ -69,6 +69,7 @@ Tomás não luta — foge, esconde-se, sobe, rasteja por condutas. O movimento t
   - 2 novos testes `PlayerControllerTests` (`WalkingThroughStairZoneWithoutVerticalInput_NeverEngagesStairs`, `PinnedAtTopOfLadder_WalkingSideways_LeavesTheStair`). 65/65 testes do projeto a passar.
 - 2026-10-22 — Confirmado (por pergunta direta): depois do fix anterior, o Tomás já responde a A/D ao sair da escada, mas fica à altura a que subiu — não é bug, é a consequência direta de "sem sistema de queda à parte" (Ideia/Registo da F1-01-B): a `StairZone_Ladder` de teste levava a espaço aberto sem nada visível por baixo, por isso parecia "flutuar" mesmo estando a responder bem. Reduzida a altura da escada de teste (~1.95u → ~1.15u) e acrescentado `Prop_LadderLanding` (tira decorativa, sem colisor — não é preciso, não há gravidade) para o topo parecer uma saliência em vez de vazio. Confirmado também que a caixa empurrada para contra a `Prop_Shelf` é o comportamento **esperado** (colisão a funcionar), não um bug.
   - **Bug real encontrado nesta ronda:** reportado "a caixa pára dentro do retângulo vermelho... não só quando toca" — a caixa ia ficando cada vez mais sobreposta à `Prop_Shelf` em vez de parar encostada. Causa: `Pushable.Push` fazia o próprio `BoxCast` sem nenhuma margem de segurança — exatamente o mesmo tunelamento já corrigido no `PlayerController` da F1-01-A (`Physics2D.queriesStartInColliders = false` faz um cast que já começa encostado a um colisor ignorá-lo), mas o fix nunca tinha sido replicado para o `Pushable`. Corrigido com o mesmo `SkinWidth = 0.02`. Novo teste de regressão `PushingBoxIntoWall_NeverSlidesInsideIt` (empurra uma caixa contra uma parede e mantém Interact+Move premidos durante 3s, confirma que a caixa nunca ultrapassa a parede). 66/66 testes do projeto a passar.
+- 2026-10-24 — **Confirmado.** Fricção de teste reportada: com a câmara fixa da sandbox, testar os objetos novos (conduta/escada/caixa, mais longe do spawn) obriga a deslocar manualmente o Tomás e a câmara na cena. Não é bug da F1-01 — a câmara ainda não segue o jogador, isso é a F1-02 (Salas, câmara e transições, Cinemachine), que depende desta feature e é o próximo passo natural. Estado passa a `DONE`.
 
 ## Ideias
 - "Coyote time" e buffer de input na entrada de escadas se parecer rígido.

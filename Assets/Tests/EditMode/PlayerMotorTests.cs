@@ -106,5 +106,66 @@ namespace Aurora.Tests.EditMode
             _motor.Tick(0f, false, false, true, 1f / 60f);
             Assert.IsTrue(_motor.FacingRight, "Facing should hold its last direction when input stops.");
         }
+
+        [Test]
+        public void Tick_PartialAnalogInput_ScalesSpeedProportionally()
+        {
+            for (var i = 0; i < 120; i++)
+                _motor.Tick(0.5f, false, false, true, 1f / 60f);
+
+            Assert.AreEqual(_config.WalkSpeed * 0.5f, _motor.Velocity.x, 0.01f,
+                "An analog stick pushed halfway should walk at half speed, not full speed.");
+        }
+
+        [Test]
+        public void EnterStairs_SetsIsOnStairsAndClampsInitialProgress()
+        {
+            _motor.EnterStairs(1.5f);
+
+            Assert.IsTrue(_motor.IsOnStairs);
+            Assert.AreEqual(1f, _motor.StairProgress);
+        }
+
+        [Test]
+        public void TickOnStairs_MovingUp_IncreasesProgressTowardTop()
+        {
+            _motor.EnterStairs(0f);
+
+            for (var i = 0; i < 60; i++)
+                _motor.TickOnStairs(1f, 2f, 1f, 1f / 60f);
+
+            Assert.AreEqual(1f, _motor.StairProgress, 0.001f);
+            Assert.IsTrue(_motor.IsMoving);
+        }
+
+        [Test]
+        public void TickOnStairs_MovingDown_DecreasesProgressTowardBottom()
+        {
+            _motor.EnterStairs(1f);
+
+            for (var i = 0; i < 60; i++)
+                _motor.TickOnStairs(-1f, 2f, 1f, 1f / 60f);
+
+            Assert.AreEqual(0f, _motor.StairProgress, 0.001f);
+        }
+
+        [Test]
+        public void TickOnStairs_NoInput_DoesNotMoveAndStaysIdle()
+        {
+            _motor.EnterStairs(0.5f);
+            _motor.TickOnStairs(0f, 2f, 1f, 1f / 60f);
+
+            Assert.AreEqual(0.5f, _motor.StairProgress, 0.001f);
+            Assert.IsFalse(_motor.IsMoving);
+        }
+
+        [Test]
+        public void ExitStairs_ClearsIsOnStairs()
+        {
+            _motor.EnterStairs(0.5f);
+            _motor.ExitStairs();
+
+            Assert.IsFalse(_motor.IsOnStairs);
+        }
     }
 }

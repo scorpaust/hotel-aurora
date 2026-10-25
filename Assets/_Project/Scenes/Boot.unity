@@ -129,6 +129,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1662307958}
   - component: {fileID: 1662307959}
+  - component: {fileID: 1662307960}
   m_Layer: 0
   m_Name: GameBootstrap
   m_TagString: Untagged
@@ -163,6 +164,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee0db08f5bc5ca249b2e05e7557fa93c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Aurora.Input::Aurora.Input.GameBootstrap
+--- !u!114 &1662307960
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1662307957}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f977e385f140dce4f8bc07a23d653c17, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Aurora.Platform::Aurora.Platform.PlatformBootstrap
 --- !u!1 &1993955934
 GameObject:
   m_ObjectHideFlags: 0

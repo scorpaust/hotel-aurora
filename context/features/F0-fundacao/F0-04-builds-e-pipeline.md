@@ -26,11 +26,11 @@ Nenhum.
 
 ## Critérios de aceitação
 - [x] `BuildWindows` gera build em batchmode com exit code 0. *(Confirmado — ver Registo.)*
-- [ ] `BuildWeb` gera build em batchmode com exit code 0. *(Bloqueado por um hang do pipeline WebGL neste Editor — ver Registo.)*
-- [ ] O build Web abre no Chrome e Firefox e mostra o MainMenu placeholder; input de teclado e gamepad funciona.
+- [x] `BuildWeb` gera build em batchmode com exit code 0. *(Confirmado pelo terminal, fora do Editor, com Gzip — ver Registo.)*
+- [ ] O build Web abre no Chrome e Firefox e mostra o MainMenu placeholder; input de teclado e gamepad funciona. *(Falta servir e testar manualmente no browser.)*
 - [x] O build Windows abre e fecha corretamente. *(Abre e mostra o MainMenu placeholder — confirmado manualmente. Fecha-se pelo Gestor de Tarefas; sem botão "Sair" nem `Alt+F4` testados ainda, mas isso é esperado nesta fase — "Sair" é o `F4-01`, ainda `TODO`. Ver Registo.)*
 - [ ] `BuildSteam` compila (mesmo sem Steamworks ainda) e o define está ativo. *(Define `STEAM_BUILD` confirmado no perfil `Windows-Steam`; falta correr o build para confirmar a compilação completa.)*
-- [ ] Tamanho do build Web registado no `## Registo` (linha de base).
+- [x] Tamanho do build Web registado no `## Registo` (linha de base). *(16 MB — ver Registo.)*
 
 ## Testes
 - EditMode: `BuildArgsParser` (parsing puro de `-buildVersion`/`-outputPath`, sem precisar de correr um build). 7 testes a passar.
@@ -46,6 +46,7 @@ Nenhum.
   - A alteração de `BuildRunner.cs` para `WebGLCompressionFormat.Gzip` (com comentário `TODO F0-04` a explicar o porquê) confirmada como **decisão definitiva** (não um workaround temporário) — Brotli fica como ideia a retomar só se o hang for investigado e resolvido (ver `## Ideias`).
   - Unity fechado por completo (`taskkill`) e build Windows real corrido por terminal, fora do Editor/MCP, em segundo plano (`tools/build.sh windows`): **sucesso, exit code 0**. `Hotel Aurora.exe` gerado em `Builds/Windows/0.0.1/` (130 MB), `buildinfo.json` escrito corretamente (`version: 0.0.1`, `commit: cb5bec0`, `builtAtUtc` confirmado). Prova que o `BuildRunner`/`BuildArgsParser`/pipeline funcionam fim-a-fim para Windows em batchmode real.
 - 2026-10-25 — Teste manual do `.exe` Windows: abre e mostra o MainMenu placeholder com o título "Hotel Aurora", confirmando o build. Corre em fullscreen sem chrome de janela (sem X); sem botão "Sair" ainda (esse é o `F4-01`, ainda `TODO`) e `Alt+F4` não foi testado — utilizador terminou pelo Gestor de Tarefas. Decidido não bloquear a F0-04 por isto: a ausência de um botão "Sair" é esperada nesta fase (dependência do `F4-01`), e fechar pelo Gestor de Tarefas é aceitável para um build placeholder. Fica como nota para confirmar `Alt+F4` numa próxima sessão e para o `F4-01` adicionar o "Sair" real.
+- 2026-10-25 — Build Web real repetido fora do Editor (Unity fechado por completo, `tools/build.sh web` por terminal, com `compressionFormat = Gzip`): **sucesso, exit code 0**, sem qualquer hang — confirma que o problema anterior era mesmo específico de correr `BuildPipeline.BuildPlayer` através do bridge do Editor/MCP (ou do Editor ficar ligado durante builds longas), não do pipeline WebGL em si. Output em `Builds/Web/0.0.1/` (`index.html`, `Build/0.0.1.{data,framework.js,wasm}.unityweb` + `.loader.js`), `buildinfo.json` correto (`commit: a52cc35`). **Tamanho do build (linha de base): 16 MB** — bem dentro do limite de 60 MB do `codespec.md` §2. Falta: servir localmente (`npx http-server Builds/Web/0.0.1 -c-1`) e testar manualmente no Chrome/Firefox com teclado e gamepad.
 
 ## Ideias
 - CI com GitHub Actions + GameCI quando o projeto estabilizar.

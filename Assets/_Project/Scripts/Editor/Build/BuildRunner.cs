@@ -45,7 +45,10 @@ namespace Aurora.Editor.Build
             try
             {
                 PlayerSettings.WebGL.template = WebGLTemplate;
-                PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Brotli;
+                // TODO F0-04: spec asks for Brotli, but it hung this Editor/Unity combo for
+                // over an hour on the data-file compression step (0% CPU, "Not Responding").
+                // Using Gzip until that's root-caused — revisit before shipping (F7-01).
+                PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Gzip;
                 PlayerSettings.WebGL.decompressionFallback = true;
                 PlayerSettings.WebGL.exceptionSupport = WebGLExceptionSupport.ExplicitlyThrownExceptionsOnly;
 

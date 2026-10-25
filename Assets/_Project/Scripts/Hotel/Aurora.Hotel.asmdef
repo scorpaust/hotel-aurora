@@ -6,7 +6,8 @@
         "Aurora.Input",
         "Aurora.Gameplay",
         "Aurora.Narrative",
-        "Aurora.Audio"
+        "Aurora.Audio",
+        "Unity.Cinemachine"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

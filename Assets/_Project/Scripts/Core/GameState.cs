@@ -11,6 +11,7 @@ namespace Aurora.Core
         Dialogue,
         Cutscene,
         Chase,
+        Transition,
         GameOver
     }
 }

@@ -2,7 +2,9 @@
     "name": "Aurora.Core",
     "rootNamespace": "Aurora.Core",
     "references": [
-        "Unity.InputSystem"
+        "Unity.InputSystem",
+        "Unity.Addressables",
+        "Unity.ResourceManager"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

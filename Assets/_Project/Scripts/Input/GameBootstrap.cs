@@ -18,6 +18,7 @@ namespace Aurora.Input
             Services.Register<IGameStateService>(gameStateService);
             var sceneService = new SceneService();
             Services.Register<ISceneService>(sceneService);
+            Services.Register<IWorldFlagsService>(new WorldFlagsService());
 
             if (BootstrapFlags.PlayFromAnywhere)
             {

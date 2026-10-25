@@ -2,6 +2,7 @@
 
 using Aurora.Core;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Aurora.Gameplay
 {
@@ -54,6 +55,12 @@ namespace Aurora.Gameplay
 
         private bool _isPushing;
 
+        private RoomConnection? _overlappingConnection;
+
+        /// <summary>The single active PlayerController, so Aurora.Hotel's room-transition
+        /// service can warp Tomás without Aurora.Gameplay having to reference Aurora.Hotel.</summary>
+        public static PlayerController? Current { get; private set; }
+
         private void Awake()
         {
             _rigidbody = GetComponent<Rigidbody2D>();
@@ -65,6 +72,21 @@ namespace Aurora.Gameplay
             _standingColliderOffset = _collider.offset;
         }
 
+        private void OnEnable() => Current = this;
+
+        private void OnDisable()
+        {
+            if (Current == this)
+                Current = null;
+        }
+
+        /// <summary>Teleports the player, bypassing physics — used by room transitions.</summary>
+        public void WarpTo(Vector2 position)
+        {
+            _rigidbody.position = position;
+            transform.position = position;
+        }
+
         private void Update()
         {
             if (_input == null && !Services.TryGet(out _input))
@@ -72,6 +94,9 @@ namespace Aurora.Gameplay
 
             if (!Services.TryGet<IGameStateService>(out var gameState) || !IsControllable(gameState.CurrentState))
                 return;
+
+            if (_overlappingConnection != null && _input.Gameplay.Interact.WasPressedThisFrame())
+                _overlappingConnection.Activate();
 
             var move = _input.Gameplay.Move.ReadValue<Vector2>();
 
@@ -208,10 +233,16 @@ namespace Aurora.Gameplay
         {
             if (other.TryGetComponent<StairZone>(out var zone))
                 _overlappingStairZone = zone;
+
+            if (other.TryGetComponent<RoomConnection>(out var connection))
+                _overlappingConnection = connection;
         }
 
         private void OnTriggerExit2D(Collider2D other)
         {
+            if (other.TryGetComponent<RoomConnection>(out var connection) && connection == _overlappingConnection)
+                _overlappingConnection = null;
+
             if (!other.TryGetComponent<StairZone>(out var zone) || zone != _overlappingStairZone)
                 return;
 

@@ -25,5 +25,12 @@ namespace Aurora.Hotel
         public string DisplayName => _displayName;
         public bool HasPastLayer => _hasPastLayer;
         public LevelFlowDefinition? Flow => _flow;
+
+        /// <summary>Editor-authoring helper — lets tooling set these private fields without SerializedObject.</summary>
+        public void Configure(string id, string displayName)
+        {
+            _id = id;
+            _displayName = displayName;
+        }
     }
 }

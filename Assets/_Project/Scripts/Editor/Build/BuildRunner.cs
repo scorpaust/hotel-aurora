@@ -72,6 +72,23 @@ namespace Aurora.Editor.Build
 
         private static void Run(string profileName, BuildTarget target, bool development, string[]? extraDefines)
         {
+            // Addressables bakes content for EditorUserBuildSettings.activeBuildTarget, not
+            // for BuildPlayerOptions.target — without this switch, building e.g. Web right
+            // after a Windows build silently packs Windows bundles into the Web player
+            // (confirmed live: WebGL build loaded StreamingAssets/aa/StandaloneWindows64/...
+            // and 404'd in the browser).
+            if (EditorUserBuildSettings.activeBuildTarget != target)
+            {
+                var switched = EditorUserBuildSettings.SwitchActiveBuildTarget(
+                    BuildPipeline.GetBuildTargetGroup(target), target);
+                if (!switched)
+                {
+                    Debug.LogError($"[BuildRunner] Could not switch active build target to {target}.");
+                    FailBatchmode();
+                    return;
+                }
+            }
+
             var cliArgs = Environment.GetCommandLineArgs();
             var version = BuildArgsParser.ResolveVersion(cliArgs, PlayerSettings.bundleVersion);
             var outputRoot = BuildArgsParser.ResolveOutputPath(cliArgs, profileName, version);

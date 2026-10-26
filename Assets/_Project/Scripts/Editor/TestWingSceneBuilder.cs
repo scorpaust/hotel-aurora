@@ -79,41 +79,69 @@ namespace Aurora.Editor
         {
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
 
+            const float roomSpacing = 16f; // room width (10) + a 6-unit gap between rooms
+
             CreateRoom(roomA, new Vector2(0f, 0f), "Spawn_A", out var roomObjA);
-            var doorConditional = CreateConnectionZoneAt(roomObjA.transform, "Door_Conditional", new Vector2(5.5f, 1.3f));
+            var doorConditional = CreateConnectionZoneAt(roomObjA.transform, "Door_Conditional", new Vector2(9.5f, 1.3f));
             doorConditional.Configure(
                 RoomConnectionType.Door,
                 new RoomDestination("RoomB", "Spawn_B"),
                 GateFlagKey, 1,
                 new RoomDestination("RoomC", "Spawn_C"));
 
-            CreateRoom(roomB, new Vector2(10f, 0f), "Spawn_B", out var roomObjB);
+            CreateRoom(roomB, new Vector2(roomSpacing, 0f), "Spawn_B", out var roomObjB);
             var doorBackB = CreateConnectionZoneAt(roomObjB.transform, "Door_Back", new Vector2(0.5f, 1.3f));
             doorBackB.Configure(RoomConnectionType.Door, new RoomDestination("RoomA", "Spawn_A"));
 
-            CreateRoom(roomC, new Vector2(20f, 0f), "Spawn_C", out var roomObjC);
+            CreateRoom(roomC, new Vector2(roomSpacing * 2f, 0f), "Spawn_C", out var roomObjC);
             var doorBackC = CreateConnectionZoneAt(roomObjC.transform, "Door_Back", new Vector2(0.5f, 1.3f));
             doorBackC.Configure(RoomConnectionType.Door, new RoomDestination("RoomA", "Spawn_A"));
 
-            var stairwellToAnnex = CreateConnectionZoneAt(roomObjC.transform, "Stairwell_ToAnnex", new Vector2(5.5f, 1.3f));
+            var stairwellToAnnex = CreateConnectionZoneAt(roomObjC.transform, "Stairwell_ToAnnex", new Vector2(9.5f, 1.3f));
             stairwellToAnnex.Configure(
                 RoomConnectionType.Stairwell,
                 new RoomDestination("RoomD", "Spawn_D", "SCN_TestWingAnnex"));
 
             var tomasPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(TomasPrefabPath);
             var tomas = (GameObject)PrefabUtility.InstantiatePrefab(tomasPrefab);
-            tomas.transform.position = new Vector3(1f, 0.78f, 0f);
+            tomas.transform.position = new Vector3(5f, 0.78f, 0f);
+
+            // Matches the project's 2D orthographic convention (see SCN_PrototypeSandbox's Main
+            // Camera) — both default to Perspective otherwise, which also breaks
+            // CinemachineConfiner2D (it's built for an orthographic 2D camera; under Perspective
+            // it degenerates and snaps the camera to the bounding shape's centroid instead of
+            // following anything).
+            const float orthographicSize = 1.8f;
 
             var cameraGo = new GameObject("Main Camera");
             var camera = cameraGo.AddComponent<Camera>();
             camera.tag = "MainCamera";
+            camera.orthographic = true;
+            camera.orthographicSize = orthographicSize;
+            camera.clearFlags = CameraClearFlags.SolidColor;
+            camera.backgroundColor = new Color(0.106f, 0.09f, 0.078f, 1f); // --aurora-ink
             cameraGo.AddComponent<AudioListener>();
-            cameraGo.AddComponent<CinemachineBrain>();
+            var brain = cameraGo.AddComponent<CinemachineBrain>();
+            // PlayerController moves its kinematic Rigidbody2D from Update(), not FixedUpdate() —
+            // SmartUpdate's heuristic (which picks the update phase based on how the Follow
+            // target seems to move) got this wrong and the camera never caught up at all.
+            // LateUpdate is also Cinemachine's own general recommendation outside of
+            // physics-interpolated rigidbodies.
+            brain.UpdateMethod = CinemachineBrain.UpdateMethods.LateUpdate;
 
             var vcamGo = new GameObject("CM_RoomCamera");
             var vcam = vcamGo.AddComponent<CinemachineCamera>();
             vcam.Follow = tomas.transform;
-            vcamGo.AddComponent<CinemachinePositionComposer>();
+            var lens = vcam.Lens;
+            lens.ModeOverride = LensSettings.OverrideModes.Orthographic;
+            lens.OrthographicSize = orthographicSize;
+            vcam.Lens = lens;
+            var composer = vcamGo.AddComponent<CinemachinePositionComposer>();
+            // Reset() defaults Damping to (1,1,1) — a ~1s time constant that reads as "the
+            // camera isn't following at all" during normal walking (confirmed live: it does
+            // catch up, just 2+ seconds late). Spec item 4 asks for a responsive camera
+            // ("dead zone horizontal pequena; lookahead leve"), so tighten it here.
+            composer.Damping = new Vector3(0.15f, 0.3f, 0f);
             var confiner = vcamGo.AddComponent<CinemachineConfiner2D>();
             confiner.BoundingShape2D = roomObjA.GetComponent<Collider2D>();
 
@@ -151,17 +179,25 @@ namespace Aurora.Editor
             roomObject = new GameObject($"Room_{definition.Id}");
             roomObject.transform.position = origin;
 
+            // 10x6 — comfortably bigger than the camera's view at orthographic size 1.8 in
+            // 16:9 (~6.4x3.6). A room smaller than the view leaves CinemachineConfiner2D with
+            // no room to pan on that axis, and it was snapping to the shape's centroid instead
+            // of following anything (confirmed live: removing the confiner fixed tracking
+            // instantly, at the original 6x4 room size).
             var bounds = roomObject.AddComponent<BoxCollider2D>();
             bounds.isTrigger = true;
-            bounds.size = new Vector2(6f, 4f);
-            bounds.offset = new Vector2(3f, 2f);
+            bounds.size = new Vector2(10f, 6f);
+            bounds.offset = new Vector2(5f, 3f);
 
             var room = roomObject.AddComponent<Room>();
             room.Configure(definition, bounds);
 
+            // Horizontally centered, not corner-hugging — near an edge, the confiner correctly
+            // clamps the camera away from the target to avoid showing outside the room, which
+            // looks like "not following" if that's the very first thing a player sees.
             var spawnGo = new GameObject($"Spawn_{definition.Id}");
             spawnGo.transform.SetParent(roomObject.transform);
-            spawnGo.transform.localPosition = new Vector3(1f, 0.78f, 0f);
+            spawnGo.transform.localPosition = new Vector3(5f, 0.78f, 0f);
             var spawn = spawnGo.AddComponent<RoomSpawnPoint>();
             spawn.SetId(spawnId);
         }

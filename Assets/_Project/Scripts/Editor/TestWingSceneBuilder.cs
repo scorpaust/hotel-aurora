@@ -79,10 +79,10 @@ namespace Aurora.Editor
         {
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
 
-            const float roomSpacing = 16f; // room width (10) + a 6-unit gap between rooms
+            const float roomSpacing = 30f; // room width (24) + a 6-unit gap between rooms
 
             CreateRoom(roomA, new Vector2(0f, 0f), "Spawn_A", out var roomObjA);
-            var doorConditional = CreateConnectionZoneAt(roomObjA.transform, "Door_Conditional", new Vector2(9.5f, 1.3f));
+            var doorConditional = CreateConnectionZoneAt(roomObjA.transform, "Door_Conditional", new Vector2(23.5f, 1.3f));
             doorConditional.Configure(
                 RoomConnectionType.Door,
                 new RoomDestination("RoomB", "Spawn_B"),
@@ -97,14 +97,14 @@ namespace Aurora.Editor
             var doorBackC = CreateConnectionZoneAt(roomObjC.transform, "Door_Back", new Vector2(0.5f, 1.3f));
             doorBackC.Configure(RoomConnectionType.Door, new RoomDestination("RoomA", "Spawn_A"));
 
-            var stairwellToAnnex = CreateConnectionZoneAt(roomObjC.transform, "Stairwell_ToAnnex", new Vector2(9.5f, 1.3f));
+            var stairwellToAnnex = CreateConnectionZoneAt(roomObjC.transform, "Stairwell_ToAnnex", new Vector2(23.5f, 1.3f));
             stairwellToAnnex.Configure(
                 RoomConnectionType.Stairwell,
                 new RoomDestination("RoomD", "Spawn_D", "SCN_TestWingAnnex"));
 
             var tomasPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(TomasPrefabPath);
             var tomas = (GameObject)PrefabUtility.InstantiatePrefab(tomasPrefab);
-            tomas.transform.position = new Vector3(5f, 0.78f, 0f);
+            tomas.transform.position = new Vector3(12f, 0.78f, 0f);
 
             // Matches the project's 2D orthographic convention (see SCN_PrototypeSandbox's Main
             // Camera) — both default to Perspective otherwise, which also breaks
@@ -179,15 +179,15 @@ namespace Aurora.Editor
             roomObject = new GameObject($"Room_{definition.Id}");
             roomObject.transform.position = origin;
 
-            // 10x6 — comfortably bigger than the camera's view at orthographic size 1.8 in
-            // 16:9 (~6.4x3.6). A room smaller than the view leaves CinemachineConfiner2D with
-            // no room to pan on that axis, and it was snapping to the shape's centroid instead
-            // of following anything (confirmed live: removing the confiner fixed tracking
-            // instantly, at the original 6x4 room size).
+            // 24x10 — the camera's view at orthographic size 1.8 in 16:9 is only ~6.4x3.6, so
+            // 10x6 (tried first) left just a ~3.6-unit pannable window before the confiner
+            // legitimately clamped at the walls — technically correct, but it reads as "camera
+            // locks up" since most of the room is outside that window. 24x10 gives ~17.6 units
+            // of real horizontal pan room.
             var bounds = roomObject.AddComponent<BoxCollider2D>();
             bounds.isTrigger = true;
-            bounds.size = new Vector2(10f, 6f);
-            bounds.offset = new Vector2(5f, 3f);
+            bounds.size = new Vector2(24f, 10f);
+            bounds.offset = new Vector2(12f, 5f);
 
             var room = roomObject.AddComponent<Room>();
             room.Configure(definition, bounds);
@@ -197,7 +197,7 @@ namespace Aurora.Editor
             // looks like "not following" if that's the very first thing a player sees.
             var spawnGo = new GameObject($"Spawn_{definition.Id}");
             spawnGo.transform.SetParent(roomObject.transform);
-            spawnGo.transform.localPosition = new Vector3(5f, 0.78f, 0f);
+            spawnGo.transform.localPosition = new Vector3(12f, 0.78f, 0f);
             var spawn = spawnGo.AddComponent<RoomSpawnPoint>();
             spawn.SetId(spawnId);
         }

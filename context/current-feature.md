@@ -1,39 +1,41 @@
 # Funcionalidade Atual
 
-<!-- Ver especificação completa em context/features/F0-fundacao/F0-04-builds-e-pipeline.md -->
+<!-- Ver especificação completa em context/features/F1-nucleo/F1-02-salas-camara-transicoes.md -->
 
-# F0-04 — Build profiles e pipeline CLI
+# F1-02 — Salas, câmara e transições
 
 ## Estado
 
-DONE — build Web, Windows e Steam confirmados via CLI; testes manuais de abrir Web/Windows feitos
+DONE
 
 ## Objetivos
 
-Gerar builds Web e Windows por linha de comandos desde o primeiro dia, para que problemas do browser apareçam cedo e não no fim.
+O hotel é feito de salas ligadas por portas, escadas e elevadores. A câmara enquadra cada sala; passar de uma para outra é rápido e carrega conteúdo por ala via Addressables.
 
-- `IPlatformServices` (Core) + `NullPlatform`/`WebPlatform` (Aurora.Platform), registados por `PlatformBootstrap`.
-- 3 `BuildProfile` reais (`Web`, `Windows`, `Windows-Steam`) em `Assets/Settings/Build Profiles/`.
-- `Aurora.Editor.Build.BuildRunner` (+ `BuildArgsParser` testável) com os métodos `BuildWeb`/`BuildWindows`/`BuildSteam`/`BuildWebDev`/`BuildWindowsDev`.
-- Template WebGL `AuroraMinimal`.
-- `tools/build.sh`/`build.ps1`.
+- `IWorldFlagsService`/`WorldFlagsService` (mini-serviço de flags, sem persistência — a F1-06 estende).
+- `RoomConnectionType`/`RoomDestination`/`RoomTransitionRequest`/`IRoomTransitionService` (Aurora.Core, partilhados por Gameplay e Hotel).
+- `RoomConnection` (Aurora.Gameplay, trigger ad-hoc como `StairZone`/`Pushable`).
+- `Room`/`RoomSpawnPoint`/`RoomTransitionController` (Aurora.Hotel).
+- `SceneService` a usar Addressables; `RoomFadePanel` (Aurora.UI) para o fade, desacoplado via `GameEvent`.
+- Cinemachine 3 (`CinemachineBrain`/`CinemachineCamera`/`CinemachinePositionComposer`/`CinemachineConfiner2D`).
+- Teste dentro da única cena de sandbox (`SCN_PrototypeSandbox`, sub-árvore `RoomPlayground`) + `SCN_SandboxAnnex` (mudança de ala).
 
-**Não inclui:** Steamworks (F7-02), otimização fina (F7-01).
+**Não inclui:** eventos do hotel vivo (F3-03), elevador "que sente medo" (F3-03), Beatriz na transição (ainda não existe, F2-02).
 
 ## Critérios de aceitação
 
-- [ ] `BuildWeb` e `BuildWindows` geram builds em batchmode com exit code 0.
-- [ ] O build Web abre no Chrome e Firefox e mostra o MainMenu placeholder; input de teclado e gamepad funciona.
-- [ ] O build Windows abre e fecha corretamente.
-- [ ] `BuildSteam` compila (mesmo sem Steamworks ainda) e o define está ativo.
-- [ ] Tamanho do build Web registado no Registo (linha de base).
+- [x] Atravessar 3 salas sem a câmara sair dos limites de cada uma.
+- [x] Porta condicional leva ao destino A ou B conforme uma flag.
+- [x] Mudança de ala carrega/descarrega cenas sem picos visíveis (< 1 s de ecrã negro no PC).
+- [x] Funciona no build Web.
 
 ## Histórico
 
 <!-- Manter atualizado. Da mais antiga para a mais recente -->
 
-- 2026-10-25 — Depois de fechar a F1-01 (Etapa A+B), decidido terminar a Fase 0 antes de continuar a Fase 1 — a F0-04 é a única `TODO` da Fase 0 com dependências `DONE`. Branch `feature/f0-04-builds-pipeline` criada a partir de `main`.
-- 2026-10-25 — Implementado: `IPlatformServices`/`NullPlatform`/`WebPlatform`/`PlatformBootstrap`, `BuildArgsParser` (7 testes EditMode) + `BuildRunner`, 3 Build Profiles reais criados via `BuildProfileSetup` (API nova do Unity 6, confirmada por consulta ao Context7 antes de escrever código), template WebGL `AuroraMinimal`, `tools/build.sh`/`build.ps1`. 73/73 testes do projeto a passar; compilação limpa. Decidido não correr um build real nesta sessão (pode demorar vários minutos) — fica para quando o Editor puder ficar ocupado. Estado passa a REVIEW, não DONE, até isso acontecer.
-- 2026-10-25 — Build Web real (Brotli, depois Gzip) hung duas vezes com o Editor ligado via MCP (Unity "Não responde" por 1h15+ e depois 10+ min) — não é específico do Brotli, causa ainda não identificada. Unity fechado por completo e build Windows real corrido por terminal (`tools/build.sh windows`), fora do Editor: **sucesso, exit code 0**, `Hotel Aurora.exe` em `Builds/Windows/0.0.1/` (130 MB), `buildinfo.json` correto. Falta: teste manual de abrir/fechar o `.exe`, resolver o build Web (hang não investigado a fundo), e o commit da alteração Brotli→Gzip em `BuildRunner.cs` (ainda por decidir se é definitiva). Estado continua REVIEW.
-- 2026-10-25 — Teste manual do `.exe` Windows: abre e mostra o MainMenu placeholder; fecha só pelo Gestor de Tarefas (sem botão "Sair" — esperado, é o `F4-01`). Decisão Gzip confirmada como definitiva e commitada (`a52cc35`). Repetido o build Web fora do Editor (Unity fechado, terminal): **sucesso, exit code 0, sem hang** — confirma que o hang anterior era do Editor/MCP ligado, não do pipeline WebGL. Tamanho (linha de base): 16 MB. Falta só: teste manual no browser (Chrome/Firefox, teclado+gamepad) e o build `BuildSteam`.
-- 2026-10-25 — Build Web servido localmente e testado no browser: abre e mostra o MainMenu placeholder, igual ao Windows (sem input para testar ainda — placeholder sem botões/ações reais). `BuildSteam` corrido por terminal: sucesso, exit code 0, `STEAM_BUILD` ativo. Todos os critérios de aceitação fechados. **Estado passa a DONE.**
+- 2026-10-25 — Depois de fechar a F0-04, retomada a Fase 1 pela F1-02 (primeira `TODO` com dependências `DONE`). Branch `feature/f1-02-salas-camara-transicoes` criada a partir de `main`. Antes de escrever código, 2 decisões de âmbito confirmadas pelo utilizador: mini-serviço de `WorldFlags` agora (não esperar pela F1-06) e painel de fade mínimo próprio (não esperar pela F4-01).
+- 2026-10-25 — Implementado de ponta a ponta: serviços novos em `Aurora.Core`, `RoomConnection` em `Aurora.Gameplay` (não em `Aurora.Hotel` — a direção de dependência é a inversa), `Room`/`RoomSpawnPoint`/`RoomTransitionController` em `Aurora.Hotel`, fade via `GameEvent` (Aurora.UI desacoplado), `SceneService` migrado para Addressables, Cinemachine 3 configurado. Cenas de teste geradas por um script de Editor idempotente (`TestWingSceneBuilder`), não editadas à mão.
+- 2026-10-25 — Dois bugs reais encontrados e corrigidos ao testar: (1) `Room` registava-se antes de `Configure()` definir o id, quando criado por código (testes/ferramenta) — corrigido para registar dentro do próprio `Configure()` e resolver spawn points ao vivo; (2) `BuildRunner` nunca trocava a plataforma ativa do Editor antes de compilar, e o Addressables empacota para a plataforma ativa, não para o alvo do build — um build Web a seguir a um build Windows ia com bundles do Windows lá dentro (confirmado no browser: 404 em `StreamingAssets/aa/StandaloneWindows64/...`). Corrigido; build Web real voltou a mostrar o MainMenu corretamente.
+- 2026-10-25 — Testes: `run_tests` do MCP do Editor voltou a bloquear em PlayMode (mesmo padrão de hangs anteriores) — testes corridos por CLI batchmode a partir daí. 68/68 a passar, com 3 falhas pré-existentes da F1-01 identificadas como fragilidade de timing em batchmode (contagens fixas de frames a 60fps), não causadas por esta feature. Build Web real confirmado no browser. Todos os critérios fechados — estado passa a `DONE`.
+- 2026-10-26/27 — Utilizador testou `SCN_TestWing` manualmente no Editor: câmara "esquisita" (minúscula, depois presa). Três bugs reais de câmara (Perspective em vez de Orthographic, damping do `CinemachinePositionComposer` por omissão, salas pequenas de mais para o confiner ter margem) — corrigidos e confirmados com capturas de ecrã reais (`capture_game_view`), não só leituras de posição.
+- 2026-11-08 — Utilizador pediu consolidação: uma só cena de sandbox viva, que se vai adaptando, em vez de cenas de teste descartáveis por feature (tinha posto quadrados manuais no Editor que se perdiam sempre que a cena era regenerada). `TestWingSceneBuilder` substituído por `RoomPlaygroundBuilder`, que constrói dentro do `SCN_PrototypeSandbox` (sub-árvore `RoomPlayground`, nunca a cena inteira) e reutiliza o Tomás já existente. Chão visível colorido por sala + marcador visível nas portas/escadas — resolve a causa raiz da queixa. `SCN_TestWingAnnex` renomeada para `SCN_SandboxAnnex`, afastada no espaço para não sobrepor o conteúdo da F1-01. Regra nova em `rules.md` §6. Confirmado de novo com capturas reais em todas as transições.

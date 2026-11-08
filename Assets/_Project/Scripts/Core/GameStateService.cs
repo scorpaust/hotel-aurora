@@ -15,12 +15,13 @@ namespace Aurora.Core
             [GameState.Playing] = new[]
             {
                 GameState.Paused, GameState.Dialogue, GameState.Cutscene, GameState.Chase,
-                GameState.GameOver, GameState.MainMenu
+                GameState.Transition, GameState.GameOver, GameState.MainMenu
             },
             [GameState.Paused] = new[] { GameState.Playing, GameState.MainMenu },
             [GameState.Dialogue] = new[] { GameState.Playing },
             [GameState.Cutscene] = new[] { GameState.Playing },
             [GameState.Chase] = new[] { GameState.Playing, GameState.Paused, GameState.GameOver },
+            [GameState.Transition] = new[] { GameState.Playing },
             [GameState.GameOver] = new[] { GameState.Playing, GameState.MainMenu }
         };
 
@@ -33,6 +34,7 @@ namespace Aurora.Core
             [GameState.Dialogue] = InputContext.Dialogue,
             [GameState.Cutscene] = InputContext.Cutscene,
             [GameState.Chase] = InputContext.Gameplay,
+            [GameState.Transition] = InputContext.Cutscene,
             [GameState.GameOver] = InputContext.UI
         };
 

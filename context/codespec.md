@@ -105,7 +105,7 @@ Core ← Audio ← Hotel
 Core ← Platform ← Platform.Steam
 UI → (Core, Input, Narrative, Gameplay via eventos)
 ```
-`Core` não depende de nada do projeto. `UI` nunca é referenciado por gameplay. `Hotel` pode referenciar `Narrative` e `Audio` (bosses/armadilhas apontam para memórias, diálogos e cues de áudio/vfx — ver §5.4/§5.6), mas `Narrative` e `Audio` nunca referenciam `Hotel`. `Editor` (ferramentas/validadores/build scripts, nunca entra num build de jogador) pode referenciar qualquer assembly de domínio de que precise — atualmente `Core`, `Hotel` e `Narrative`, para o `ContentDefinitionValidator`/`LevelFlowValidator`/`LevelGeneratorWindow` (§5.6).
+`Core` não depende de nada do projeto. `UI` nunca é referenciado por gameplay. `Hotel` pode referenciar `Narrative` e `Audio` (bosses/armadilhas apontam para memórias, diálogos e cues de áudio/vfx — ver §5.4/§5.6), mas `Narrative` e `Audio` nunca referenciam `Hotel`. Como `Hotel` depende de `Gameplay` e não o inverso, qualquer coisa que o `Gameplay` precise de acionar (ex.: uma porta/escada entre salas) tem de viver no próprio `Gameplay` e falar com o `Hotel` só através de tipos partilhados em `Core` (ver §5.7) — nunca por referência direta. `Editor` (ferramentas/validadores/build scripts, nunca entra num build de jogador) pode referenciar qualquer assembly de domínio de que precise — atualmente `Core`, `Hotel`, `Gameplay`, `UI` e `Narrative`, para o `ContentDefinitionValidator`/`LevelFlowValidator`/`LevelGeneratorWindow` (§5.6) e o `RoomPlaygroundBuilder`/`AddressablesSetup` (§5.7).
 
 ---
 
@@ -128,6 +128,8 @@ Registo simples em `Aurora.Core.Services` (service locator explícito, sem frame
 | `IAudioService` | Música por camadas, SFX, ambiente, snapshots do mixer. |
 | `ILocalizationService` | Wrapper fino sobre o pacote Localization. |
 | `IPlatformServices` | Achievements, cloud, presence. Implementações: `NullPlatform`, `WebPlatform`, `SteamPlatform`. |
+| `IWorldFlagsService` | Flags do mundo (§5.5). Implementação atual (`WorldFlagsService`) é só em memória; a F1-06 adiciona persistência sem trocar a interface. |
+| `IRoomTransitionService` | Orquestra uma transição entre salas/alas (§5.7). Implementado por `RoomTransitionController` (Hotel). |
 
 ### 5.3 Comunicação
 - **Eventos via ScriptableObject** (`GameEvent`, `GameEvent<T>`) para comunicação entre sistemas desacoplados (ex.: `OnMemoryRecovered`, `OnHotelEventTriggered`).
@@ -141,7 +143,7 @@ Registo simples em `Aurora.Core.Services` (service locator explícito, sem frame
 | `MemoryDefinition` | Memória recuperável (id, ala, fragmentos, cutscene associada, efeito na história). |
 | `DialogueGraph` | Nós de diálogo, condições sobre flags, efeitos. |
 | `HotelEventDefinition` | Evento do hotel vivo *ambiente* (tipo, gatilho, intensidade, cooldown) — não confundir com `TrapDefinition` abaixo, que é um obstáculo colocado numa sala. |
-| `RoomDefinition` | Sala: id, nome, se tem camada do passado, `LevelFlowDefinition` associado (§5.6). Placeholder mínimo até a F1-02 desenvolver ligações/spawn points a sério. |
+| `RoomDefinition` | Sala: id, nome, se tem camada do passado, `LevelFlowDefinition` associado (§5.6). Ligações e spawn points **não** vivem aqui — são do componente `Room`/`RoomConnection` em cena (§5.7); este SO é só metadata partilhável. |
 | `GuestBookEntry` | Entradas do livro de hóspedes (desbloqueáveis, colecionáveis). |
 | `EnemyDefinition` | Inimigo genérico: id, nome, sprites/Animator Controller, nível de dificuldade, objeto de identidade (prop visual ligado à revelação da lanterna — nunca uma arma de combate), parâmetros base de comportamento (velocidade, deteção — hooks para a IA da Fase 3, ainda sem lógica). |
 | `BossDefinition` | Estende `EnemyDefinition`: número de fases, dados por fase (comportamento, puzzle da lanterna, condição de transição de fase), `MemoryDefinition` recuperada ao resolver, `GuestBookEntry` associado. |
@@ -154,7 +156,7 @@ Registo simples em `Aurora.Core.Services` (service locator explícito, sem frame
 Todos os SO têm `id` estável (string) usado no save. **Nunca** gravar referências diretas a assets.
 
 ### 5.5 Flags do mundo
-`WorldFlags` = dicionário `string → int`. Convenção de chaves: `ala.objeto.estado` (ex.: `quartos.governanta.libertada`). Constantes geradas em `FlagKeys.cs` por ferramenta de Editor a partir de um SO de registo.
+`WorldFlags` = dicionário `string → int`, acedido via `IWorldFlagsService` (`Services.Get<IWorldFlagsService>()`). Convenção de chaves: `ala.objeto.estado` (ex.: `quartos.governanta.libertada`). A implementação atual (`WorldFlagsService`, F1-02) é só em memória, sem persistência — a F1-06 envolve-a num serviço com save/load sem trocar a interface. Constantes geradas em `FlagKeys.cs` por ferramenta de Editor a partir de um SO de registo (ainda `TODO`).
 
 ### 5.6 Fluxos de nível e gerador
 
@@ -164,6 +166,16 @@ Cada ala do hotel conta sempre a **mesma história fixa** (ver §1 e a descriç�
 - `LevelFlowDefinition` (SO): sequência ordenada de beats; cada beat aponta para a(s) *Definition concreta(s) a usar nesse ponto (ex.: um beat `EnemyEncounter` aponta para uma lista de `EnemyDefinition`). Vários fluxos podem existir como assets reutilizáveis entre alas.
 - Cada `RoomDefinition`/ala tem um `LevelFlowDefinition` como propriedade — é aí que se escolhe **qual** sequência de beats essa ala usa.
 - `LevelGeneratorWindow` (`Aurora.Editor`, menu **Aurora/Level Generator**): ferramenta de autoria assistida. Escolhido um `LevelFlowDefinition` existente (validado primeiro por `LevelFlowValidator`), instancia um placeholder por beat na cena ativa, na ordem certa, espaçados e coloridos por tipo — até existir conteúdo real (prefabs de triggers/encontros) para cada tipo de beat. Repetir a geração substitui a tentativa anterior (`LevelFlow_Generated`), nunca acumula lixo. Corre só no Editor, nunca em runtime — não é um gerador procedimental do jogo em si.
+
+### 5.7 Salas e transições (F1-02)
+
+- `Room` (`Aurora.Hotel`, componente em cena): envolve um `RoomDefinition`, expõe o `Collider2D` usado como `CinemachineConfiner2D.BoundingShape2D` e resolve os `RoomSpawnPoint` filhos por id (scan ao vivo, não cacheado — só corre no momento da transição). Regista-se por id num registo estático próprio (`Room.TryGetById`), como o `Services`.
+- `RoomConnection` (**`Aurora.Gameplay`**, não `Hotel` — ver §4): porta/escada/elevador/passagem. Mesmo padrão ad-hoc do `StairZone`/`Pushable`: um trigger que o `PlayerController` deteta por overlap e aciona com Interact (`RoomConnection.Activate()`), sem depender de um sistema de interação genérico (isso é a F1-03, ainda `TODO`). Carrega um `RoomConnectionType`, um `RoomDestination` (roomId + spawnId + cena opcional para mudar de ala) e, opcionalmente, uma condição por `WorldFlags` com um `RoomDestination` alternativo.
+- `RoomTransitionRequest`/`RoomDestination`/`RoomConnectionType`/`IRoomTransitionService` vivem em `Core` — é o vocabulário partilhado que permite ao `RoomConnection` (Gameplay) pedir uma transição sem o `Gameplay` ter de referenciar o `Hotel`.
+- `RoomTransitionController` (`Aurora.Hotel`, implementa `IRoomTransitionService`): bloqueia input (`GameState.Transition`) → dispara um `GameEvent` de fade out → resolve o destino (`RoomTransitionResolver`, lógica pura testável) → carrega a ala nova via `ISceneService` se o destino for noutra cena → teleporta o jogador (via `PlayerController.Current`, acessor estático análogo ao `Room.TryGetById`) → troca o `CinemachineConfiner2D` → descarrega a ala antiga se o jogador saiu dela → dispara o `GameEvent` de fade in → `GameState.Playing`.
+- Fade: painel UI Toolkit mínimo (`RoomFadePanel`, `Aurora.UI`), ouvido por `GameEventListener`s ligados aos `GameEvent`s `SO_RoomFadeOutRequested`/`SO_RoomFadeInRequested` — mantém o `Hotel` desacoplado do `UI`, como o resto do projeto (§5.3).
+- Testado dentro da **única cena de sandbox** (`SCN_PrototypeSandbox`, `rules.md` §6): uma sub-árvore `RoomPlayground` (3 salas + câmara + transições, com chão colorido visível por sala — nunca só colliders invisíveis) construída por `RoomPlaygroundBuilder` (`Aurora.Editor`, menu **Aurora/Level Generator/Build Room Playground (F1-02)**). Este script só apaga/reconstrói a sub-árvore `RoomPlayground`, nunca a cena inteira — o conteúdo da F1-01/F1-08 ao lado fica intocado. `SCN_SandboxAnnex` (cena separada, carregada aditivamente) existe só para testar a mudança de ala (criar/destruir essa cena é o próprio teste); a sua sala fica bem afastada no espaço (x=200) para não sobrepor nada.
+- **Importante para builds:** desde que Addressables entrou em jogo, qualquer `BuildRunner.Run()` troca `EditorUserBuildSettings.activeBuildTarget` para o alvo pedido antes de compilar — o Addressables empacota conteúdo para a plataforma ativa no Editor, não para o alvo do `BuildPlayer`. Sem isto, um build para uma plataforma X corrido a seguir a um build para Y fica com os bundles de Y lá dentro.
 
 ---
 

@@ -4,8 +4,14 @@
     "references": [
         "Aurora.Core",
         "Aurora.Hotel",
+        "Aurora.Gameplay",
+        "Aurora.UI",
         "Aurora.Narrative",
-        "Unity.2D.Sprite.Editor"
+        "Unity.2D.Sprite.Editor",
+        "Unity.Addressables.Editor",
+        "Unity.Addressables",
+        "Unity.ResourceManager",
+        "Unity.Cinemachine"
     ],
     "includePlatforms": [
         "Editor"

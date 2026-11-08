@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: TestWing
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: TestWing
+  m_GUID: addf0b5cd4cf5bf469f015b8d18559af
+  m_SerializeEntries:
+  - m_GUID: 97725b07f57716843b5a03b9eee6d356
+    m_Address: SCN_SandboxAnnex
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 9cf00ee7f48957b4b8bc27099b14246b, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 4a9ef62fb06fb714992ae8e8887fb437, type: 2}
+    - {fileID: 11400000, guid: ed8058a0154dceb4da253e5a4ebd2c2c, type: 2}
+    m_SchemaDisplayOrder:
+    - TestWing_BundledAssetGroupSchema
+    - TestWing_ContentUpdateGroupSchema
+  m_IncludeInBuild: 1
+  m_IncludeInBuildMigrated: 1

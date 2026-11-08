@@ -15,8 +15,8 @@ MonoBehaviour:
   m_GroupName: TestWing
   m_GUID: addf0b5cd4cf5bf469f015b8d18559af
   m_SerializeEntries:
-  - m_GUID: cb7c34e8adfb805428d70df06502ca67
-    m_Address: SCN_TestWingAnnex
+  - m_GUID: 97725b07f57716843b5a03b9eee6d356
+    m_Address: SCN_SandboxAnnex
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

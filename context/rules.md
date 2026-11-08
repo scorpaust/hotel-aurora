@@ -58,6 +58,8 @@ Usa sempre o executável do Editor da versão do projeto. Variável sugerida: `U
 - `.meta` sempre versionados junto ao asset.
 - Nomes: `PFB_` prefabs, `SO_` ScriptableObjects, `SCN_` cenas de ala, `SPR_`, `ANI_`, `SFX_`, `MUS_`, `UXML_`, `USS_`.
 - Conteúdo novo sempre Addressable, agrupado por ala.
+- **Uma só cena de sandbox viva** (`SCN_PrototypeSandbox`) para testar gameplay — nunca criar uma cena de teste nova por feature. Vai-se estendendo: cada sistema acrescenta a sua área/sub-árvore (ex.: `RoomPlayground` da F1-02), afastada do que já lá está. Um script de Editor que a alimenta só pode apagar/reconstruir a **sua própria** sub-árvore nomeada — nunca a cena inteira (`NewScene`/regenerar tudo), ou destrói ajustes manuais feitos lá por quem está a testar.
+- Geometria de teste/placeholder é sempre **visível** (retângulo simples com cor, por §2) — nunca só colliders invisíveis. Confirma visualmente (captura de ecrã ou no Editor, nunca só leituras de posição por script) antes de marcar uma feature com câmara/visual como `DONE`.
 
 ## 7. Git
 

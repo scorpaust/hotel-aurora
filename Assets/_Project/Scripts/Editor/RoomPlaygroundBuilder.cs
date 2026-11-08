@@ -46,6 +46,60 @@ namespace Aurora.Editor
         private static readonly Color RoomDColor = new(0.478f, 0.361f, 0.165f); // --aurora-brass-dim
         private static readonly Color ConnectionColor = new(0.494f, 0.122f, 0.122f); // --aurora-blood
 
+        // Tomás's F1-01 spawn — recorded so "Return to F1-01 Corridor" can send him back.
+        private static readonly Vector3 CorridorSpawnPosition = new(0.78f, 0.02f, 0f);
+        private static readonly Vector3 PlaygroundSpawnPosition = new(PlaygroundOriginX + RoomWidth / 2f, 0.78f, 0f);
+
+        [MenuItem("Aurora/Level Generator/Go To Room Playground")]
+        public static void GoToRoomPlayground()
+        {
+            var root = GameObject.Find(RootName);
+            if (root == null)
+            {
+                Debug.LogError($"[RoomPlaygroundBuilder] No '{RootName}' in the active scene — run Build Room Playground first.");
+                return;
+            }
+
+            var cameraTransform = root.transform.Find("Main Camera (Playground)");
+            if (cameraTransform == null)
+            {
+                Debug.LogError("[RoomPlaygroundBuilder] 'Main Camera (Playground)' not found under RoomPlayground.");
+                return;
+            }
+
+            cameraTransform.gameObject.SetActive(true);
+            WarpTomas(PlaygroundSpawnPosition);
+            Debug.Log("[RoomPlaygroundBuilder] Playground camera enabled, Tomás moved to RoomA's spawn.");
+        }
+
+        [MenuItem("Aurora/Level Generator/Return To F1-01 Corridor")]
+        public static void ReturnToCorridor()
+        {
+            var root = GameObject.Find(RootName);
+            var cameraTransform = root != null ? root.transform.Find("Main Camera (Playground)") : null;
+            if (cameraTransform != null)
+                cameraTransform.gameObject.SetActive(false);
+
+            WarpTomas(CorridorSpawnPosition);
+            Debug.Log("[RoomPlaygroundBuilder] Playground camera disabled, Tomás moved back to the F1-01 corridor spawn.");
+        }
+
+        /// <summary>Moves Tomás in either Edit or Play mode — in Play, goes through WarpTo() so the Rigidbody2D stays in sync, not just the Transform.</summary>
+        private static void WarpTomas(Vector3 position)
+        {
+            var tomas = GameObject.Find(TomasObjectName);
+            if (tomas == null)
+            {
+                Debug.LogError($"[RoomPlaygroundBuilder] Could not find '{TomasObjectName}' in the active scene.");
+                return;
+            }
+
+            if (Application.isPlaying && tomas.TryGetComponent<PlayerController>(out var controller))
+                controller.WarpTo(position);
+            else
+                tomas.transform.position = position;
+        }
+
         [MenuItem("Aurora/Level Generator/Build Room Playground (F1-02)")]
         public static void Build()
         {

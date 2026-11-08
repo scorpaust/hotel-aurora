@@ -69,6 +69,7 @@ namespace Aurora.Editor
 
             cameraTransform.gameObject.SetActive(true);
             WarpTomas(PlaygroundSpawnPosition);
+            ForceGameViewRepaint();
             Debug.Log("[RoomPlaygroundBuilder] Playground camera enabled, Tomás moved to RoomA's spawn.");
         }
 
@@ -81,6 +82,7 @@ namespace Aurora.Editor
                 cameraTransform.gameObject.SetActive(false);
 
             WarpTomas(CorridorSpawnPosition);
+            ForceGameViewRepaint();
             Debug.Log("[RoomPlaygroundBuilder] Playground camera disabled, Tomás moved back to the F1-01 corridor spawn.");
         }
 
@@ -98,6 +100,23 @@ namespace Aurora.Editor
                 controller.WarpTo(position);
             else
                 tomas.transform.position = position;
+        }
+
+        /// <summary>
+        /// The Game view in Edit mode (not Play) only redraws on certain triggers — without
+        /// this, toggling the camera/moving Tomás from a menu command can leave the panel
+        /// showing a stale frame from before the change until the user clicks into it or
+        /// moves the mouse over it (confirmed live: this exact "nothing updates" symptom).
+        /// </summary>
+        private static void ForceGameViewRepaint()
+        {
+            EditorApplication.QueuePlayerLoopUpdate();
+            SceneView.RepaintAll();
+            foreach (var view in Resources.FindObjectsOfTypeAll<EditorWindow>())
+            {
+                if (view.GetType().Name == "GameView")
+                    view.Repaint();
+            }
         }
 
         [MenuItem("Aurora/Level Generator/Build Room Playground (F1-02)")]

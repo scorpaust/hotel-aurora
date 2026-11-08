@@ -242,6 +242,13 @@ namespace Aurora.Editor
             listenerIn.SetEvent(fadeIn);
             UnityEventTools.AddVoidPersistentListener(listenerIn.Response, fadePanel.FadeIn);
 
+            // Off by default: its depth (10) renders over the sandbox's own Main Camera
+            // regardless of where Tomás actually is, so with it active the F1-01 corridor
+            // test (Tomás left at his usual spawn, nowhere near the playground) just shows an
+            // empty RoomA — confirmed live, this is what the "only black and brown" report
+            // was. Tick this GameObject on in the Inspector only while testing rooms.
+            cameraGo.SetActive(false);
+
             EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
             EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene());
         }

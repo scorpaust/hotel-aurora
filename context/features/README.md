@@ -24,7 +24,7 @@ Objetivo: Tomás a andar numa sala de teste, com lanterna, ferramentas e checkpo
 |---|---|---|---|
 | F1-01 | [Controlador do Tomás](F1-nucleo/F1-01-controlador-tomas.md) | F0-04 | DONE |
 | F1-02 | [Salas, câmara e transições](F1-nucleo/F1-02-salas-camara-transicoes.md) | F1-01 | DONE |
-| F1-03 | [Sistema de interação](F1-nucleo/F1-03-interacao.md) | F1-01 | TODO |
+| F1-03 | [Sistema de interação](F1-nucleo/F1-03-interacao.md) | F1-01 | DOING |
 | F1-04 | [Lanterna e camada do passado](F1-nucleo/F1-04-lanterna-camada-passado.md) | F1-03 | TODO |
 | F1-05 | [Ferramentas e mochila](F1-nucleo/F1-05-ferramentas-mochila.md) | F1-03 | TODO |
 | F1-06 | [Save, checkpoints e flags](F1-nucleo/F1-06-save-checkpoints.md) | F1-02, F1-05 | TODO |

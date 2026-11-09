@@ -18,7 +18,7 @@ Cozinha iluminada pelo sol, pai mais novo, pequeno-almoço na mesa: a manhã ant
 4. **Quarto da filha:** cheiro a bolo de laranja (sinal visual), brinquedos que se mexem. Lanterna revela o acidente — cena de memória com tratamento cuidadoso (sugerido, nunca gráfico).
 5. **O fundador** lembra-se do nome da filha → Timeline → luz do sol entra no hotel (transição de iluminação global de todas as luzes 2D).
 6. **Saída:** escadaria, Beatriz e a mãe (silhueta), a linha final dela. Desbloqueia o nome dela no livro de hóspedes (agora pode ser lido — já não tem medo).
-7. **Epílogo:** casa, caixa de ferramentas, chave de latão com o nome do Tomás. Créditos sobre o livro a fechar (`uispec.md` §3.10).
+7. **Epílogo:** casa, caixa de ferramentas, chave de latão com o nome do Tomás. Créditos sobre o livro a fechar (`uispec.md` §3.10), usando o `CreditsScreen` da F4-06 com fundo transparente — esta feature só decide se dá para saltar neste contexto.
 8. Achievements de final (ligados em F7-02).
 
 ## Critérios de aceitação

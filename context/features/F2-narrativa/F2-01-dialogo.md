@@ -13,7 +13,7 @@ Conversas com Beatriz, com o hotel (vozes no telefone, a campainha), com hósped
 
 ## Especificação
 1. Nó: `id`, `speakerId`, `lineKey` (Localization), `portraitVariant`, `next` ou `choices[]`, `conditions[]`, `effects[]`.
-2. Condições: `FlagEquals/AtLeast`, `HasItem`, `HasMemory`. Efeitos: `SetFlag`, `GiveItem`, `RaiseEvent`, `StartTimeline`.
+2. Condições: `FlagEquals/AtLeast`, `HasItem`, `HasMemory`. Efeitos: `SetFlag`, `GiveItem`, `RaiseEvent`, `StartTimeline` (precisa do `CutscenePlayer` da F4-04 — se essa feature ainda não existir, o efeito fica sem implementação, como o `IInventoryService` da F1-03 ficou vazio até à F1-05).
 3. `DialogueRunner.Start(graph)` → `GameState.Dialogue` → mapa `Dialogue`; no fim volta ao estado anterior.
 4. Texto com escrita progressiva; `Advance` completa a linha ou avança; `Skip` (hold) salta para a próxima escolha.
 5. **Balões ambientais** (`AmbientLine`): texto sobre a cabeça de quem fala, não pausa, fila com prioridade, usados pela Beatriz em F2-02.

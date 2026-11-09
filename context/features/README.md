@@ -32,6 +32,7 @@ Objetivo: Tomás a andar numa sala de teste, com lanterna, ferramentas e checkpo
 | F1-08 | [Cena de protótipo / sandbox de testes](F1-nucleo/F1-08-cena-prototipo-sandbox.md) | F1-07 | REVIEW |
 | F1-09 | [Definições configuráveis de conteúdo](F1-nucleo/F1-09-definicoes-configuraveis.md) | F1-07 | DONE |
 | F1-10 | [Fluxos de nível e gerador](F1-nucleo/F1-10-fluxos-nivel-gerador.md) | F1-09 | DONE |
+| F1-11 | [HUD de jogo](F1-nucleo/F1-11-hud-jogo.md) | F1-03, F1-04, F1-05, F1-06 | TODO |
 
 ## Fase 2 — Narrativa
 | ID | Feature | Depende de | Estado |
@@ -54,6 +55,9 @@ Objetivo: Tomás a andar numa sala de teste, com lanterna, ferramentas e checkpo
 | F4-01 | [Menus, pausa e opções](F4-sistemas/F4-01-menus-opcoes.md) | F1-06, F2-04 | TODO |
 | F4-02 | [Rebinding, prompts e acessibilidade](F4-sistemas/F4-02-rebinding-acessibilidade.md) | F4-01 | TODO |
 | F4-03 | [Áudio adaptativo](F4-sistemas/F4-03-audio.md) | F3-02 | TODO |
+| F4-04 | [Cutscenes (Timeline)](F4-sistemas/F4-04-cutscenes.md) | F1-01 | TODO |
+| F4-05 | [Vídeo e gráficos](F4-sistemas/F4-05-video-graficos.md) | F4-01 | TODO |
+| F4-06 | [Créditos](F4-sistemas/F4-06-creditos.md) | F4-01 | TODO |
 
 ## Fase 5 — Vertical slice
 Objetivo: os primeiros ~40 min completos e polidos. **Primeira build pública no Web (itch.io ou página própria).**

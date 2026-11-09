@@ -26,6 +26,7 @@ namespace Aurora.Gameplay
         [Header("Aiming")]
         [SerializeField] private float _aimClampDegrees = 70f;
         [SerializeField] private float _lightForwardOffsetDegrees;
+        [SerializeField] private Vector2 _handOffset = new(0.14f, 0.18f);
 
         [Header("Normal light")]
         [SerializeField] private float _normalInnerAngle = 50f;
@@ -68,6 +69,16 @@ namespace Aurora.Gameplay
         {
             _player = GetComponent<PlayerController>();
             _heat = new LanternHeat(_heatPerSecond, _coolPerSecond, _overheatLockoutSeconds);
+
+            // Detach from Tomás's own transform entirely. His root flips localScale.x to face
+            // left (PlayerController.UpdateAnimator) — even with the pivot's own scale
+            // counter-acting that (tried first), the Light2D under it still rendered its cone
+            // in the wrong direction (confirmed live: aiming left pointed the beam straight
+            // down instead). Light2D apparently doesn't resolve direction from decomposed
+            // rotation alone once a negative scale has been anywhere in its ancestry, even if
+            // the net scale cancels out — so the pivot now has no ancestor to inherit from at
+            // all, and Update() positions/rotates it in world space by hand every frame.
+            _pivot.SetParent(null, true);
         }
 
         private void Update()
@@ -85,6 +96,9 @@ namespace Aurora.Gameplay
 
             _focusBlend = Mathf.MoveTowards(_focusBlend, focusActive ? 1f : 0f, _focusLerpSpeed * Time.deltaTime);
 
+            // Position before aiming: ComputeAimDirection's mouse-to-world conversion reads
+            // _pivot.position, so it needs this frame's position, not last frame's.
+            UpdatePivotPosition();
             var direction = ComputeAimDirection();
             ApplyLight(direction, overheated);
 
@@ -137,9 +151,26 @@ namespace Aurora.Gameplay
             return new Vector2(v.x * cos - v.y * sin, v.x * sin + v.y * cos);
         }
 
+        /// <summary>
+        /// Unparented (see Awake) — position by hand each frame, mirroring the hand offset to
+        /// the other side when facing left, same as parenting would have done for position
+        /// (just not for rotation, which is the part that broke).
+        /// </summary>
+        private void UpdatePivotPosition()
+        {
+            var offsetX = _player.FacingRight ? _handOffset.x : -_handOffset.x;
+            _pivot.position = (Vector2)transform.position + new Vector2(offsetX, _handOffset.y);
+        }
+
         private void ApplyLight(Vector2 direction, bool overheated)
         {
-            var angleDeg = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            // Light2D's own "0 rotation" reference points local +Y (up), not +X (right) as
+            // Atan2 assumes — confirmed live by forcing known Z values and observing the
+            // actual cone direction (0->up, 90->left, 180->down, 270->right). The -90 below
+            // converts Atan2's standard +X-relative angle into Light2D's +Y-relative one. This
+            // was the real cause of the reported "aiming left points the beam down" bug — not
+            // the unparenting above, which turned out not to matter either way.
+            var angleDeg = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
             _pivot.rotation = Quaternion.Euler(0f, 0f, angleDeg + _lightForwardOffsetDegrees);
 
             // The physical lantern itself (if one is assigned) stays visible and turns with

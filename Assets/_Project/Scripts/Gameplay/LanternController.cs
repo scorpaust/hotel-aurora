@@ -116,9 +116,9 @@ namespace Aurora.Gameplay
             // Position before aiming: the Cone built below reads _pivot.position, so it needs
             // this frame's position, not last frame's.
             UpdatePivotPosition();
-            var direction = ComputeAimDirection(out var deviationDegrees);
+            var direction = ComputeAimDirection();
             ApplyLight(direction, overheated);
-            ApplyVisual(deviationDegrees);
+            ApplyVisual();
 
             IsRevealing = _isOn && !overheated && _focusBlend > 0.01f;
 
@@ -127,16 +127,9 @@ namespace Aurora.Gameplay
             Cone = new LanternCone(_pivot.position, direction, halfAngle, range);
         }
 
-        /// <summary>
-        /// World-space aim direction. deviationDegrees is the signed offset from the facing
-        /// direction that produced it (0 at rest), in the character's own forward-relative
-        /// sense — ApplyVisual uses it instead of re-deriving an angle from the world direction,
-        /// so it never has to untangle which world rotation came from which facing side.
-        /// </summary>
-        private Vector2 ComputeAimDirection(out float deviationDegrees)
+        private Vector2 ComputeAimDirection()
         {
             var facing = _player.FacingRight ? Vector2.right : Vector2.left;
-            deviationDegrees = 0f;
             if (_input == null)
                 return facing;
 
@@ -161,7 +154,6 @@ namespace Aurora.Gameplay
                 _mouseTiltDegrees = _player.FacingRight ? clamped : -clamped;
             }
 
-            deviationDegrees = _player.FacingRight ? clamped : -clamped;
             return RotateDegrees(facing, clamped);
         }
 
@@ -223,35 +215,36 @@ namespace Aurora.Gameplay
         }
 
         /// <summary>
-        /// Rotates/mirrors the handheld prop independently of the Light2D's own world rotation
-        /// (_pivot.rotation, set in ApplyLight). The two can't share one rotation: the sprite's
-        /// own pivot sits near the grip with the lantern's body hanging below and to one side
-        /// (confirmed via Sprite.bounds — not centered on the pivot), so the pivot's -90°
-        /// (facing right) vs +90° (facing left) rest rotations aren't mirror images of each
-        /// other for an off-center shape — one swings the body down, the other up (reported:
-        /// visibly lower when facing right). Driving the visual from deviationDegrees (always
-        /// expressed in the character's own forward-relative sense) plus a localScale.x flip
-        /// instead reproduces the same shape on both sides, just mirrored, like a normal 2D
-        /// character flip.
+        /// Matches the Light2D's own world rotation (_pivot.rotation, already set this frame by
+        /// ApplyLight, which runs first) exactly, instead of re-deriving an angle of its own.
+        /// An earlier version computed the visual's rotation from a facing-agnostic reference
+        /// vector (always "as if facing right") plus a localScale.x flip, specifically to avoid
+        /// an off-center sprite pivot swinging the rendered content to a different vertical
+        /// offset on each side. That reference vector pointed along local +Y, which a
+        /// localScale.x flip can never affect — so while it fixed the vertical case (reportedly
+        /// lower when facing right), it left the visual pointing the same world-horizontal
+        /// direction regardless of facing once genuinely aimed up/down, i.e. mirrored on the
+        /// wrong axis (reported: the lantern angled opposite the mouse/focus when facing left).
+        /// Now that the sprite's own pivot is recentered on its visual content (see codespec.md
+        /// §5.9), that original asymmetry is gone at the source, so the visual can safely reuse
+        /// the same rotation as the light — which is already correctly mirrored, since `direction`
+        /// itself differs in sign between facing sides.
         /// </summary>
-        private void ApplyVisual(float deviationDegrees)
+        private void ApplyVisual()
         {
             if (_visual == null)
                 return;
 
             _visual.enabled = _isOn;
 
-            // Pinned explicitly rather than left to inherit from _pivot: harmless when the
-            // sprite's own local offset is zero (the common case), but makes the prop's anchor
-            // immune to any local offset an authoring pass leaves on it in the future, instead
-            // of silently drifting away from the hand whenever _pivot's rotation and this
-            // method's own rotation (deliberately different — see class comment below) disagree.
+            // Pinned explicitly rather than left to inherit from _pivot: harmless today (the
+            // sprite's own local offset is zero), but keeps the prop's anchor immune to any
+            // local offset a future authoring pass leaves on it.
             _visual.transform.position = _pivot.position;
+            _visual.transform.rotation = _pivot.rotation;
 
-            var mirrored = RotateDegrees(Vector2.right, deviationDegrees);
-            var visualAngleDeg = Mathf.Atan2(mirrored.y, mirrored.x) * Mathf.Rad2Deg - 90f;
-            _visual.transform.rotation = Quaternion.Euler(0f, 0f, visualAngleDeg + _lightForwardOffsetDegrees);
-
+            // Mirrors any left-right-asymmetric art detail (a handle drawn to one side, say) so
+            // it reads as the same lantern held in the other hand, not a different shape.
             var scale = _visualBaseScale;
             scale.x = Mathf.Abs(scale.x) * (_player.FacingRight ? 1f : -1f);
             _visual.transform.localScale = scale;

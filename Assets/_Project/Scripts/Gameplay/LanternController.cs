@@ -29,7 +29,8 @@ namespace Aurora.Gameplay
         [SerializeField] private Vector2 _handOffset = new(0.14f, 0.18f);
         [Tooltip("Seconds the mouse cursor can sit still (or sit outside the game view, which reads as not moving) before the lantern rests facing forward instead of tracking a stale/out-of-window screen position.")]
         [SerializeField] private float _mouseIdleTimeout = 1f;
-        [SerializeField] private float _mouseIdleThresholdPixels = 2f;
+        [Tooltip("Kept tight on purpose: a looser threshold previously mistook slow, deliberate mouse movement (sub-threshold per frame, but real motion over the full second) for idleness, making the lantern feel sluggish to respond.")]
+        [SerializeField] private float _mouseIdleThresholdPixels = 0.5f;
 
         [Header("Normal light")]
         [SerializeField] private float _normalInnerAngle = 50f;
@@ -270,6 +271,13 @@ namespace Aurora.Gameplay
                 return;
 
             _visual.enabled = _isOn;
+
+            // Pinned explicitly rather than left to inherit from _pivot: harmless when the
+            // sprite's own local offset is zero (the common case), but makes the prop's anchor
+            // immune to any local offset an authoring pass leaves on it in the future, instead
+            // of silently drifting away from the hand whenever _pivot's rotation and this
+            // method's own rotation (deliberately different — see class comment below) disagree.
+            _visual.transform.position = _pivot.position;
 
             var mirrored = RotateDegrees(Vector2.right, deviationDegrees);
             var visualAngleDeg = Mathf.Atan2(mirrored.y, mirrored.x) * Mathf.Rad2Deg - 90f;

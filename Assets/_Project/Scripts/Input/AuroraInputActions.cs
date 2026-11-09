@@ -494,7 +494,7 @@ namespace Aurora.Input
                 {
                     ""name"": """",
                     ""id"": ""f1a3c5e7-9b2d-4f6a-8c1e-3d5b7f9a1c2e"",
-                    ""path"": ""<Mouse>/position"",
+                    ""path"": ""<Mouse>/delta"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""KeyboardMouse"",

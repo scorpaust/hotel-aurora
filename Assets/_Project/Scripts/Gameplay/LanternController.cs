@@ -27,6 +27,8 @@ namespace Aurora.Gameplay
         [SerializeField] private float _aimClampDegrees = 70f;
         [SerializeField] private float _lightForwardOffsetDegrees;
         [SerializeField] private Vector2 _handOffset = new(0.14f, 0.18f);
+        [Tooltip("Degrees of tilt per pixel of mouse movement (vertical delta).")]
+        [SerializeField] private float _mouseSensitivityDegreesPerPixel = 0.25f;
 
         [Header("Normal light")]
         [SerializeField] private float _normalInnerAngle = 50f;
@@ -51,12 +53,23 @@ namespace Aurora.Gameplay
 
         private PlayerController _player = null!;
         private IInputService? _input;
-        private Camera? _camera;
         private LanternHeat? _heat;
 
         private bool _isOn;
         private float _focusBlend;
         private Vector3 _visualBaseScale = Vector3.one;
+
+        /// <summary>
+        /// Persistent mouse tilt, in world sense (positive = tilted up) regardless of facing —
+        /// moving the mouse up always tilts the beam up, whichever way Tomás faces. Driven by the
+        /// mouse's delta control instead of sampling its screen position and converting it
+        /// through Camera.ScreenToWorldPoint: that absolute approach repeatedly proved unreliable
+        /// in the Editor's Game View (stale/zero readings when the OS cursor isn't tracked as
+        /// expected), surviving several rounds of threshold/timeout tuning that never fully fixed
+        /// it. A relative delta sidesteps all of that — it never depends on where the OS cursor
+        /// physically sits, only on how it moved since last frame.
+        /// </summary>
+        private float _mouseTiltDegrees;
 
         /// <summary>True while the past-layer reveal is actually active (on, focused, not overheated).</summary>
         public bool IsRevealing { get; private set; }
@@ -100,8 +113,8 @@ namespace Aurora.Gameplay
 
             _focusBlend = Mathf.MoveTowards(_focusBlend, focusActive ? 1f : 0f, _focusLerpSpeed * Time.deltaTime);
 
-            // Position before aiming: ComputeAimDirection's mouse-to-world conversion reads
-            // _pivot.position, so it needs this frame's position, not last frame's.
+            // Position before aiming: the Cone built below reads _pivot.position, so it needs
+            // this frame's position, not last frame's.
             UpdatePivotPosition();
             var direction = ComputeAimDirection(out var deviationDegrees);
             ApplyLight(direction, overheated);
@@ -128,46 +141,26 @@ namespace Aurora.Gameplay
                 return facing;
 
             var raw = _input.Gameplay.LanternAim.ReadValue<Vector2>();
-            Vector2 desired;
+            float clamped;
 
             if (_input.CurrentDevice == InputDeviceKind.KeyboardMouse)
             {
-                // The screen origin is the Input System's de-facto sentinel for "no real
-                // position" — confirmed live: LanternAim.ReadValue pins to exactly (0,0)
-                // whenever the OS cursor isn't over the Game View. Resting immediately on it
-                // (rather than tracking the stale/invalid screen point, which used to clamp the
-                // beam hard toward that corner) is the only idle-handling this needs: an
-                // accumulating stillness timer was tried first (to also rest on a cursor that's
-                // genuinely stopped moving, not just off-window) but proved unreliable — the
-                // Editor's own mouse-position reporting doesn't reliably register sub-pixel
-                // deltas every frame even during real, active movement, so the timer could latch
-                // into "idle" and then never see a large-enough per-frame delta to leave it again
-                // (reported: the lantern getting stuck pointing straight along the facing
-                // direction, unresponsive to further mouse movement). A still-but-valid cursor
-                // now just keeps the beam wherever it was last aimed, like a real flashlight.
-                if (raw.sqrMagnitude < 1f)
-                    return facing;
-
-                _camera = ActiveCameraResolver.Resolve(_camera);
-                if (_camera == null)
-                    return facing;
-
-                var depth = _camera.WorldToScreenPoint(_pivot.position).z;
-                var worldPoint = _camera.ScreenToWorldPoint(new Vector3(raw.x, raw.y, depth));
-                desired = (Vector2)worldPoint - (Vector2)_pivot.position;
+                _mouseTiltDegrees = Mathf.Clamp(_mouseTiltDegrees + raw.y * _mouseSensitivityDegreesPerPixel, -_aimClampDegrees, _aimClampDegrees);
+                clamped = _player.FacingRight ? _mouseTiltDegrees : -_mouseTiltDegrees;
             }
             else
             {
-                desired = raw.magnitude > 0.2f ? raw : facing;
+                var desired = raw.magnitude > 0.2f ? raw : facing;
+                if (desired.sqrMagnitude < 0.0001f)
+                    return facing;
+
+                desired.Normalize();
+                var signedAngle = Vector2.SignedAngle(facing, desired);
+                clamped = Mathf.Clamp(signedAngle, -_aimClampDegrees, _aimClampDegrees);
+                // Keep the mouse accumulator in sync so switching device mid-aim doesn't jump.
+                _mouseTiltDegrees = _player.FacingRight ? clamped : -clamped;
             }
 
-            if (desired.sqrMagnitude < 0.0001f)
-                return facing;
-
-            desired.Normalize();
-
-            var signedAngle = Vector2.SignedAngle(facing, desired);
-            var clamped = Mathf.Clamp(signedAngle, -_aimClampDegrees, _aimClampDegrees);
             deviationDegrees = _player.FacingRight ? clamped : -clamped;
             return RotateDegrees(facing, clamped);
         }

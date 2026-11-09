@@ -6,14 +6,13 @@ using UnityEngine;
 namespace Aurora.Gameplay
 {
     /// <summary>
-    /// A door/stairwell/elevator/passage trigger zone. PlayerController detects overlap
-    /// (same pattern as StairZone/Pushable) and calls Activate() on Interact; this builds
-    /// a RoomTransitionRequest and hands it to IRoomTransitionService (Aurora.Hotel) —
-    /// RoomConnection itself never resolves rooms, so Gameplay never needs to reference
-    /// Hotel (see F1-02 spec items 2-3).
+    /// A door/stairwell/elevator/passage trigger zone, found and activated generically by
+    /// PlayerInteractor (F1-03) via IInteractable. Builds a RoomTransitionRequest and hands
+    /// it to IRoomTransitionService (Aurora.Hotel) — RoomConnection itself never resolves
+    /// rooms, so Gameplay never needs to reference Hotel (see F1-02 spec items 2-3).
     /// </summary>
     [RequireComponent(typeof(BoxCollider2D))]
-    public sealed class RoomConnection : MonoBehaviour
+    public sealed class RoomConnection : MonoBehaviour, IInteractable
     {
         [SerializeField] private RoomConnectionType _type = RoomConnectionType.Door;
         [SerializeField] private RoomDestination _destination;
@@ -42,6 +41,23 @@ namespace Aurora.Gameplay
             _conditionRequiredValue = conditionRequiredValue;
             _fallbackDestination = fallbackDestination;
         }
+
+        public string VerbKey => _type switch
+        {
+            RoomConnectionType.Door => "interact.door.open",
+            RoomConnectionType.Stairwell => "interact.stairwell.climb",
+            RoomConnectionType.Elevator => "interact.elevator.use",
+            RoomConnectionType.Passage => "interact.passage.enter",
+            _ => "interact.generic"
+        };
+
+        public InteractionKind Kind => InteractionKind.Press;
+        public float HoldDuration => 0f;
+        public int Priority => 0;
+
+        public bool CanInteract(InteractionContext context) => true;
+
+        public void Interact(InteractionContext context) => Activate();
 
         public void Activate()
         {

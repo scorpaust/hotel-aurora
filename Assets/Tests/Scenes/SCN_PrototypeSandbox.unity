@@ -430,11 +430,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3359613002065398281, guid: 721e26fb54854b04691ffa1fc498c250, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.78
+      value: 52
       objectReference: {fileID: 0}
     - target: {fileID: 3359613002065398281, guid: 721e26fb54854b04691ffa1fc498c250, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.02
+      value: 0.78
       objectReference: {fileID: 0}
     - target: {fileID: 3359613002065398281, guid: 721e26fb54854b04691ffa1fc498c250, type: 3}
       propertyPath: m_LocalPosition.z
@@ -9678,6 +9678,86 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1686160877
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1686160878}
+  - component: {fileID: 1686160879}
+  - component: {fileID: 1686160880}
+  m_Layer: 0
+  m_Name: HUD_InteractionPrompt
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1686160878
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1686160877}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1686160879
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1686160877}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
+  m_PanelSettings: {fileID: 11400000, guid: 868ed0cae7c90a84cb1ba86ab0b5f97e, type: 2}
+  m_ParentUI: {fileID: 0}
+  sourceAsset: {fileID: 0}
+  m_SortingOrder: 0
+  m_Position: 0
+  m_WorldSpaceSizeMode: 1
+  m_WorldSpaceWidth: 1920
+  m_WorldSpaceHeight: 1080
+  m_PivotReferenceSize: 0
+  m_Pivot: 0
+  m_WorldSpaceCollider: {fileID: 0}
+--- !u!114 &1686160880
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1686160877}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0403896fa0ce11a4280013f62eb46f69, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Aurora.UI::Aurora.UI.InteractionPromptPanel
+  _interactor: {fileID: 1697055505}
+--- !u!114 &1697055505 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7741422954971207192, guid: 721e26fb54854b04691ffa1fc498c250, type: 3}
+  m_PrefabInstance: {fileID: 98465445}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ba153ddbf653334eac9c843bf02ccdb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Aurora.Gameplay::Aurora.Gameplay.PlayerInteractor
 --- !u!1 &1701668942
 GameObject:
   m_ObjectHideFlags: 0
@@ -10460,7 +10540,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1854793853
 Transform:
   m_ObjectHideFlags: 0
@@ -10783,7 +10863,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f453f694addf4275988fac205bc91968, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineConfiner2D
-  BoundingShape2D: {fileID: 656465902}
+  BoundingShape2D: {fileID: 1718681421}
   Damping: 0.5
   SlowingDistance: 5
   OversizeWindow:
@@ -10874,7 +10954,7 @@ Transform:
   m_GameObject: {fileID: 1984846180}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.78, y: 0.02, z: -10}
+  m_LocalPosition: {x: 52, y: 0.78, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -11426,3 +11506,4 @@ SceneRoots:
   - {fileID: 2118463389}
   - {fileID: 185486623}
   - {fileID: 905920214}
+  - {fileID: 1686160878}

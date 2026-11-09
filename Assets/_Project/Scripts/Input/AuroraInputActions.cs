@@ -135,6 +135,16 @@ namespace Aurora.Input
                     ""priority"": 0
                 },
                 {
+                    ""name"": ""InteractHold"",
+                    ""type"": ""Button"",
+                    ""id"": ""b2f1c6a0-3d4e-4a8b-9c1f-6e2d7a5f9b10"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false,
+                    ""priority"": 0
+                },
+                {
                     ""name"": ""Lantern"",
                     ""type"": ""Button"",
                     ""id"": ""e7cf69fd-740f-42ef-9871-039f528727a4"",
@@ -402,6 +412,28 @@ namespace Aurora.Input
                     ""processors"": """",
                     ""groups"": ""Gamepad"",
                     ""action"": ""Interact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c3a8e1d5-5f6b-4c9d-8e2a-1b3c4d5e6f71"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KeyboardMouse"",
+                    ""action"": ""InteractHold"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d4b9f2e6-6a7c-4dae-9f3b-2c4d5e6f7a82"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""InteractHold"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -1266,6 +1298,7 @@ namespace Aurora.Input
             m_Gameplay_Run = m_Gameplay.FindAction("Run", throwIfNotFound: true);
             m_Gameplay_Crouch = m_Gameplay.FindAction("Crouch", throwIfNotFound: true);
             m_Gameplay_Interact = m_Gameplay.FindAction("Interact", throwIfNotFound: true);
+            m_Gameplay_InteractHold = m_Gameplay.FindAction("InteractHold", throwIfNotFound: true);
             m_Gameplay_Lantern = m_Gameplay.FindAction("Lantern", throwIfNotFound: true);
             m_Gameplay_LanternFocus = m_Gameplay.FindAction("LanternFocus", throwIfNotFound: true);
             m_Gameplay_UseTool = m_Gameplay.FindAction("UseTool", throwIfNotFound: true);
@@ -1381,6 +1414,7 @@ namespace Aurora.Input
         private readonly InputAction m_Gameplay_Run;
         private readonly InputAction m_Gameplay_Crouch;
         private readonly InputAction m_Gameplay_Interact;
+        private readonly InputAction m_Gameplay_InteractHold;
         private readonly InputAction m_Gameplay_Lantern;
         private readonly InputAction m_Gameplay_LanternFocus;
         private readonly InputAction m_Gameplay_UseTool;
@@ -1414,6 +1448,10 @@ namespace Aurora.Input
             /// Provides access to the underlying input action "Gameplay/Interact".
             /// </summary>
             public InputAction @Interact => m_Wrapper.m_Gameplay_Interact;
+            /// <summary>
+            /// Provides access to the underlying input action "Gameplay/InteractHold".
+            /// </summary>
+            public InputAction @InteractHold => m_Wrapper.m_Gameplay_InteractHold;
             /// <summary>
             /// Provides access to the underlying input action "Gameplay/Lantern".
             /// </summary>
@@ -1476,6 +1514,9 @@ namespace Aurora.Input
                 @Interact.started += instance.OnInteract;
                 @Interact.performed += instance.OnInteract;
                 @Interact.canceled += instance.OnInteract;
+                @InteractHold.started += instance.OnInteractHold;
+                @InteractHold.performed += instance.OnInteractHold;
+                @InteractHold.canceled += instance.OnInteractHold;
                 @Lantern.started += instance.OnLantern;
                 @Lantern.performed += instance.OnLantern;
                 @Lantern.canceled += instance.OnLantern;
@@ -1517,6 +1558,9 @@ namespace Aurora.Input
                 @Interact.started -= instance.OnInteract;
                 @Interact.performed -= instance.OnInteract;
                 @Interact.canceled -= instance.OnInteract;
+                @InteractHold.started -= instance.OnInteractHold;
+                @InteractHold.performed -= instance.OnInteractHold;
+                @InteractHold.canceled -= instance.OnInteractHold;
                 @Lantern.started -= instance.OnLantern;
                 @Lantern.performed -= instance.OnLantern;
                 @Lantern.canceled -= instance.OnLantern;
@@ -2060,6 +2104,13 @@ namespace Aurora.Input
             /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
             /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
             void OnInteract(InputAction.CallbackContext context);
+            /// <summary>
+            /// Method invoked when associated input action "InteractHold" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+            /// </summary>
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+            void OnInteractHold(InputAction.CallbackContext context);
             /// <summary>
             /// Method invoked when associated input action "Lantern" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
             /// </summary>

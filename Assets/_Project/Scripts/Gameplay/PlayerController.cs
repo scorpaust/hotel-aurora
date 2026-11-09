@@ -55,11 +55,12 @@ namespace Aurora.Gameplay
 
         private bool _isPushing;
 
-        private RoomConnection? _overlappingConnection;
-
         /// <summary>The single active PlayerController, so Aurora.Hotel's room-transition
         /// service can warp Tomás without Aurora.Gameplay having to reference Aurora.Hotel.</summary>
         public static PlayerController? Current { get; private set; }
+
+        /// <summary>Used by PlayerInteractor to bias its detection circle in front of Tomás.</summary>
+        public bool FacingRight => _motor.FacingRight;
 
         private void Awake()
         {
@@ -94,9 +95,6 @@ namespace Aurora.Gameplay
 
             if (!Services.TryGet<IGameStateService>(out var gameState) || !IsControllable(gameState.CurrentState))
                 return;
-
-            if (_overlappingConnection != null && _input.Gameplay.Interact.WasPressedThisFrame())
-                _overlappingConnection.Activate();
 
             var move = _input.Gameplay.Move.ReadValue<Vector2>();
 
@@ -233,16 +231,10 @@ namespace Aurora.Gameplay
         {
             if (other.TryGetComponent<StairZone>(out var zone))
                 _overlappingStairZone = zone;
-
-            if (other.TryGetComponent<RoomConnection>(out var connection))
-                _overlappingConnection = connection;
         }
 
         private void OnTriggerExit2D(Collider2D other)
         {
-            if (other.TryGetComponent<RoomConnection>(out var connection) && connection == _overlappingConnection)
-                _overlappingConnection = null;
-
             if (!other.TryGetComponent<StairZone>(out var zone) || zone != _overlappingStairZone)
                 return;
 

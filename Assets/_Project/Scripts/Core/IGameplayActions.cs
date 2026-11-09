@@ -10,6 +10,7 @@ namespace Aurora.Core
         InputAction Run { get; }
         InputAction Crouch { get; }
         InputAction Interact { get; }
+        InputAction InteractHold { get; }
         InputAction Lantern { get; }
         InputAction LanternFocus { get; }
         InputAction UseTool { get; }

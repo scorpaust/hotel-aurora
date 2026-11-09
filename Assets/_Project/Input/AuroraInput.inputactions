@@ -47,6 +47,16 @@
                     "priority": 0
                 },
                 {
+                    "name": "InteractHold",
+                    "type": "Button",
+                    "id": "b2f1c6a0-3d4e-4a8b-9c1f-6e2d7a5f9b10",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                },
+                {
                     "name": "Lantern",
                     "type": "Button",
                     "id": "e7cf69fd-740f-42ef-9871-039f528727a4",
@@ -314,6 +324,28 @@
                     "processors": "",
                     "groups": "Gamepad",
                     "action": "Interact",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c3a8e1d5-5f6b-4c9d-8e2a-1b3c4d5e6f71",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KeyboardMouse",
+                    "action": "InteractHold",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d4b9f2e6-6a7c-4dae-9f3b-2c4d5e6f7a82",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "InteractHold",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

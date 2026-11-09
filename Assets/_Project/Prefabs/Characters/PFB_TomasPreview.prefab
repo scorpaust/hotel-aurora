@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 5966271570201686907}
   - component: {fileID: 8483218717160581003}
   - component: {fileID: 2131101059695521853}
+  - component: {fileID: 7741422954971207192}
   m_Layer: 8
   m_Name: PFB_TomasPreview
   m_TagString: Player
@@ -207,3 +208,21 @@ MonoBehaviour:
   _collisionMask:
     serializedVersion: 2
     m_Bits: 1536
+  _crouchColliderHeightScale: 0.6
+--- !u!114 &7741422954971207192
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2000267625921154520}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ba153ddbf653334eac9c843bf02ccdb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Aurora.Gameplay::Aurora.Gameplay.PlayerInteractor
+  _radius: 1
+  _forwardOffset: {x: 0.5, y: 0}
+  _interactableMask:
+    serializedVersion: 2
+    m_Bits: 4294967295

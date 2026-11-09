@@ -27,6 +27,9 @@ namespace Aurora.Gameplay
         [SerializeField] private float _aimClampDegrees = 70f;
         [SerializeField] private float _lightForwardOffsetDegrees;
         [SerializeField] private Vector2 _handOffset = new(0.14f, 0.18f);
+        [Tooltip("Seconds the mouse cursor can sit still (or sit outside the game view, which reads as not moving) before the lantern rests facing forward instead of tracking a stale/out-of-window screen position.")]
+        [SerializeField] private float _mouseIdleTimeout = 1f;
+        [SerializeField] private float _mouseIdleThresholdPixels = 2f;
 
         [Header("Normal light")]
         [SerializeField] private float _normalInnerAngle = 50f;
@@ -56,6 +59,8 @@ namespace Aurora.Gameplay
 
         private bool _isOn;
         private float _focusBlend;
+        private Vector2? _lastMouseScreenPos;
+        private float _mouseIdleTimer;
 
         /// <summary>True while the past-layer reveal is actually active (on, focused, not overheated).</summary>
         public bool IsRevealing { get; private set; }
@@ -120,6 +125,9 @@ namespace Aurora.Gameplay
 
             if (_input.CurrentDevice == InputDeviceKind.KeyboardMouse)
             {
+                if (IsMouseIdle(raw))
+                    return facing;
+
                 _camera = ActiveCameraResolver.Resolve(_camera);
                 if (_camera == null)
                     return facing;
@@ -141,6 +149,29 @@ namespace Aurora.Gameplay
             var signedAngle = Vector2.SignedAngle(facing, desired);
             var clamped = Mathf.Clamp(signedAngle, -_aimClampDegrees, _aimClampDegrees);
             return RotateDegrees(facing, clamped);
+        }
+
+        /// <summary>
+        /// True once the mouse has sat within _mouseIdleThresholdPixels of its last reading for
+        /// _mouseIdleTimeout seconds straight — covers both a genuinely still cursor and one
+        /// that's left the game view entirely, which reads as a fixed (0,0) (confirmed live:
+        /// LanternAim.ReadValue stays pinned at the screen origin whenever the OS cursor isn't
+        /// over the Game View), which previously made the lantern clamp hard toward that corner
+        /// instead of resting on the facing direction.
+        /// </summary>
+        private bool IsMouseIdle(Vector2 rawScreenPos)
+        {
+            if (_lastMouseScreenPos is { } last && (rawScreenPos - last).sqrMagnitude <= _mouseIdleThresholdPixels * _mouseIdleThresholdPixels)
+            {
+                _mouseIdleTimer += Time.deltaTime;
+            }
+            else
+            {
+                _mouseIdleTimer = 0f;
+            }
+
+            _lastMouseScreenPos = rawScreenPos;
+            return _mouseIdleTimer >= _mouseIdleTimeout;
         }
 
         private static Vector2 RotateDegrees(Vector2 v, float degrees)

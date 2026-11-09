@@ -245,6 +245,9 @@ MonoBehaviour:
   _visual: {fileID: 4567677661457965270}
   _aimClampDegrees: 70
   _lightForwardOffsetDegrees: 0
+  _handOffset: {x: 0.14, y: 0.18}
+  _mouseIdleTimeout: 1
+  _mouseIdleThresholdPixels: 0.5
   _normalInnerAngle: 50
   _normalOuterAngle: 70
   _normalRange: 6

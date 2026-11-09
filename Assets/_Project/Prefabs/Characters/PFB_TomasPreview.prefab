@@ -242,6 +242,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Aurora.Gameplay::Aurora.Gameplay.LanternController
   _pivot: {fileID: 4113398417865765796}
   _light: {fileID: 5071680154580576858}
+  _visual: {fileID: 4567677661457965270}
   _aimClampDegrees: 70
   _lightForwardOffsetDegrees: 0
   _normalInnerAngle: 50
@@ -285,10 +286,11 @@ Transform:
   m_GameObject: {fileID: 6355780647191121056}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.1, y: 0.6, z: 0}
+  m_LocalPosition: {x: 0.14, y: 0.18, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 2536034184021278932}
   m_Father: {fileID: 3359613002065398281}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5071680154580576858
@@ -363,3 +365,70 @@ MonoBehaviour:
           rid: -2
         m_Provider2DCache:
           rid: -2
+--- !u!1001 &1771914678062650430
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 4113398417865765796}
+    m_Modifications:
+    - target: {fileID: 3117296372653144759, guid: dcc11456089155f439773392b90303fb, type: 3}
+      propertyPath: m_Name
+      value: PFB_HandheldLantern
+      objectReference: {fileID: 0}
+    - target: {fileID: 4298358901129057514, guid: dcc11456089155f439773392b90303fb, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4298358901129057514, guid: dcc11456089155f439773392b90303fb, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4298358901129057514, guid: dcc11456089155f439773392b90303fb, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4298358901129057514, guid: dcc11456089155f439773392b90303fb, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4298358901129057514, guid: dcc11456089155f439773392b90303fb, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4298358901129057514, guid: dcc11456089155f439773392b90303fb, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4298358901129057514, guid: dcc11456089155f439773392b90303fb, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4298358901129057514, guid: dcc11456089155f439773392b90303fb, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4298358901129057514, guid: dcc11456089155f439773392b90303fb, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4298358901129057514, guid: dcc11456089155f439773392b90303fb, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: dcc11456089155f439773392b90303fb, type: 3}
+--- !u!4 &2536034184021278932 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4298358901129057514, guid: dcc11456089155f439773392b90303fb, type: 3}
+  m_PrefabInstance: {fileID: 1771914678062650430}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &4567677661457965270 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 2879134569935271144, guid: dcc11456089155f439773392b90303fb, type: 3}
+  m_PrefabInstance: {fileID: 1771914678062650430}
+  m_PrefabAsset: {fileID: 0}

@@ -21,6 +21,7 @@ namespace Aurora.Gameplay
         [Header("Rig")]
         [SerializeField] private Transform _pivot = null!;
         [SerializeField] private Light2D _light = null!;
+        [SerializeField] private SpriteRenderer? _visual;
 
         [Header("Aiming")]
         [SerializeField] private float _aimClampDegrees = 70f;
@@ -140,6 +141,12 @@ namespace Aurora.Gameplay
         {
             var angleDeg = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
             _pivot.rotation = Quaternion.Euler(0f, 0f, angleDeg + _lightForwardOffsetDegrees);
+
+            // The physical lantern itself (if one is assigned) stays visible and turns with
+            // the aim whenever it's on — even overheated, Tomás is still holding it, just not
+            // getting light out of it.
+            if (_visual != null)
+                _visual.enabled = _isOn;
 
             if (!_isOn)
             {

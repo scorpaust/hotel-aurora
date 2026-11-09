@@ -108,4 +108,8 @@ InitTestScene*.unity*
 # Auto-generated cache in Assets folder
 /[Aa]ssets/[Ss]ceneDependencyCache*
 
+# Unity AI Assistant's own scratch cache for in-progress generations — the finished
+# asset gets copied into Assets/ by the Assistant itself; this folder is not that asset.
+/GeneratedAssets/
+
 # Art/media assets are versioned (via Git LFS, see .gitattributes), not excluded.

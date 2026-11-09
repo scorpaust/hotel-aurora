@@ -27,10 +27,6 @@ namespace Aurora.Gameplay
         [SerializeField] private float _aimClampDegrees = 70f;
         [SerializeField] private float _lightForwardOffsetDegrees;
         [SerializeField] private Vector2 _handOffset = new(0.14f, 0.18f);
-        [Tooltip("Seconds the mouse cursor can sit still (or sit outside the game view, which reads as not moving) before the lantern rests facing forward instead of tracking a stale/out-of-window screen position.")]
-        [SerializeField] private float _mouseIdleTimeout = 1f;
-        [Tooltip("Kept tight on purpose: a looser threshold previously mistook slow, deliberate mouse movement (sub-threshold per frame, but real motion over the full second) for idleness, making the lantern feel sluggish to respond.")]
-        [SerializeField] private float _mouseIdleThresholdPixels = 0.5f;
 
         [Header("Normal light")]
         [SerializeField] private float _normalInnerAngle = 50f;
@@ -60,8 +56,6 @@ namespace Aurora.Gameplay
 
         private bool _isOn;
         private float _focusBlend;
-        private Vector2? _lastMouseScreenPos;
-        private float _mouseIdleTimer;
         private Vector3 _visualBaseScale = Vector3.one;
 
         /// <summary>True while the past-layer reveal is actually active (on, focused, not overheated).</summary>
@@ -138,7 +132,20 @@ namespace Aurora.Gameplay
 
             if (_input.CurrentDevice == InputDeviceKind.KeyboardMouse)
             {
-                if (IsMouseIdle(raw))
+                // The screen origin is the Input System's de-facto sentinel for "no real
+                // position" — confirmed live: LanternAim.ReadValue pins to exactly (0,0)
+                // whenever the OS cursor isn't over the Game View. Resting immediately on it
+                // (rather than tracking the stale/invalid screen point, which used to clamp the
+                // beam hard toward that corner) is the only idle-handling this needs: an
+                // accumulating stillness timer was tried first (to also rest on a cursor that's
+                // genuinely stopped moving, not just off-window) but proved unreliable — the
+                // Editor's own mouse-position reporting doesn't reliably register sub-pixel
+                // deltas every frame even during real, active movement, so the timer could latch
+                // into "idle" and then never see a large-enough per-frame delta to leave it again
+                // (reported: the lantern getting stuck pointing straight along the facing
+                // direction, unresponsive to further mouse movement). A still-but-valid cursor
+                // now just keeps the beam wherever it was last aimed, like a real flashlight.
+                if (raw.sqrMagnitude < 1f)
                     return facing;
 
                 _camera = ActiveCameraResolver.Resolve(_camera);
@@ -163,37 +170,6 @@ namespace Aurora.Gameplay
             var clamped = Mathf.Clamp(signedAngle, -_aimClampDegrees, _aimClampDegrees);
             deviationDegrees = _player.FacingRight ? clamped : -clamped;
             return RotateDegrees(facing, clamped);
-        }
-
-        /// <summary>
-        /// True once the mouse has sat within _mouseIdleThresholdPixels of its last reading for
-        /// _mouseIdleTimeout seconds straight — covers a genuinely still cursor. A reading at
-        /// the screen origin is treated as idle immediately instead of waiting out that timer:
-        /// it's the Input System's de-facto sentinel for "no real position" whenever the OS
-        /// cursor isn't over the Game View (confirmed live: LanternAim.ReadValue pins to exactly
-        /// (0,0) in that case) — waiting out the full timeout left the beam clamped toward that
-        /// screen corner for a whole extra second (reported: "aponta sempre para baixo").
-        /// </summary>
-        private bool IsMouseIdle(Vector2 rawScreenPos)
-        {
-            if (rawScreenPos.sqrMagnitude < 1f)
-            {
-                _lastMouseScreenPos = rawScreenPos;
-                _mouseIdleTimer = _mouseIdleTimeout;
-                return true;
-            }
-
-            if (_lastMouseScreenPos is { } last && (rawScreenPos - last).sqrMagnitude <= _mouseIdleThresholdPixels * _mouseIdleThresholdPixels)
-            {
-                _mouseIdleTimer += Time.deltaTime;
-            }
-            else
-            {
-                _mouseIdleTimer = 0f;
-            }
-
-            _lastMouseScreenPos = rawScreenPos;
-            return _mouseIdleTimer >= _mouseIdleTimeout;
         }
 
         private static Vector2 RotateDegrees(Vector2 v, float degrees)

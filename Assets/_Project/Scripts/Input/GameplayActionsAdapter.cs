@@ -19,6 +19,7 @@ namespace Aurora.Input
         public InputAction InteractHold => _actions.InteractHold;
         public InputAction Lantern => _actions.Lantern;
         public InputAction LanternFocus => _actions.LanternFocus;
+        public InputAction LanternAim => _actions.LanternAim;
         public InputAction UseTool => _actions.UseTool;
         public InputAction CycleTool => _actions.CycleTool;
         public InputAction CallBeatriz => _actions.CallBeatriz;

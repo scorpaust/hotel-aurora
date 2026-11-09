@@ -13,6 +13,7 @@ namespace Aurora.Core
         InputAction InteractHold { get; }
         InputAction Lantern { get; }
         InputAction LanternFocus { get; }
+        InputAction LanternAim { get; }
         InputAction UseTool { get; }
         InputAction CycleTool { get; }
         InputAction CallBeatriz { get; }

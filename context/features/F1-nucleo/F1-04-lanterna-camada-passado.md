@@ -1,5 +1,5 @@
 # F1-04 — Lanterna e camada do passado
-**Estado:** TODO · **Depende de:** F1-03 · **Assemblies:** Aurora.Gameplay
+**Estado:** DOING · **Depende de:** F1-03 · **Assemblies:** Aurora.Core, Aurora.Gameplay
 
 ## Objetivo
 A mecânica central do jogo. A lanterna construída pelo pai ilumina e, quando focada, **revela a camada do passado**: o que o hotel foi, o que escondeu e quem os monstros eram.
@@ -25,17 +25,22 @@ A mecânica central do jogo. A lanterna construída pelo pai ilumina e, quando f
 8. Web: confirmar que o shader funciona em WebGL2 (sem compute).
 
 ## Critérios de aceitação
-- [ ] Apontar funciona com rato e com stick, sem saltos ao trocar de dispositivo.
-- [ ] Uma escada "do passado" só é atravessável enquanto revelada (+ graça).
-- [ ] Uma passagem escondida fica permanente após 2 s de foco e persiste (flag).
-- [ ] Sobreaquecimento apaga a lanterna e recupera.
-- [ ] Corre a 60 fps no PC e ≥ 30 fps no Web numa sala com 4 luzes.
+- [ ] Apontar funciona com rato e com stick, sem saltos ao trocar de dispositivo. _(geometria/recorte testados; falta confirmação humana da troca real de dispositivo)_
+- [x] Uma escada "do passado" só é atravessável enquanto revelada (+ graça).
+- [x] Uma passagem escondida fica permanente após 2 s de foco e persiste (flag).
+- [x] Sobreaquecimento apaga a lanterna e recupera.
+- [ ] Corre a 60 fps no PC e ≥ 30 fps no Web numa sala com 4 luzes. _(precisa de playtest humano/profiler)_
 
 ## Testes
-- EditMode: cálculo "ponto dentro do cone"; temporizador de aquecimento.
-- PlayMode: revelação física liga/desliga o collider.
+- EditMode: cálculo "ponto dentro do cone" (`LanternConeTests`); temporizador de aquecimento (`LanternHeatTests`).
+- PlayMode: revelação física liga/desliga o collider, incluindo graça e revelação permanente (`PastLayerObjectTests`).
 
 ## Registo
+
+- 2026-11-08/09 — Implementação completa: `LanternCone`/`LanternHeat`/`ActiveCameraResolver`/`IRevealable` (Core), `LanternController` (Gameplay), `PastLayerObject`/`RevealMode` (Gameplay). Nova ação `LanternAim` (Vector2). `Aurora.Gameplay` passou a referenciar `Unity.RenderPipelines.Universal.2D.Runtime`.
+- 2026-11-09 — Decisão inicial (placeholder script-driven) substituída a meio: a pedido do utilizador, o Unity AI Assistant criou um Shader Graph real (`SG_RevealPast.shadergraph`/`M_RevealPast.mat`) a partir de um prompt preparado por mim — usado desde já em vez do placeholder.
+- 2026-11-09 — Dois achados importantes durante a verificação ao vivo, ambos guardados em memória para não se repetirem: (1) `Shader.SetGlobalX` não tem efeito numa propriedade que o material já tenha valor próprio (todo o Shader Graph serializa um por omissão) — cada `PastLayerObject` escreve no seu próprio material clonado em vez de depender de difusão global; (2) recompilar com o Play Mode a correr limpa o `Services` estático sem nada voltar a registá-lo, silenciosamente — sempre Parar → Recompilar → Reproduzir. Depois de corrigir ambos, confirmado visualmente por captura de ecrã: o cone segue a direção certa e um objeto de teste muda de presente para passado dentro do cone, com borda suave.
+- 2026-11-09 — Detalhe completo da investigação e todos os testes (80/80 EditMode, 19/20 PlayMode — falha pré-existente da F1-01 não relacionada) em `context/current-feature.md`. Critérios 2–4 verificados por teste automatizado; 1 e 5 ficam para confirmação humana antes de fechar a feature.
 
 ## Ideias
 - Filtros de cor encontrados ao longo do jogo (revelar coisas diferentes) — só se a F6 precisar.

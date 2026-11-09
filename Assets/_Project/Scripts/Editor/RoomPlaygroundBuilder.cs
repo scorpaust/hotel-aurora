@@ -219,6 +219,9 @@ namespace Aurora.Editor
 
             CreateRoom(roomA, new Vector2(PlaygroundOriginX, 0f), "Spawn_A", RoomAColor, out var roomObjA);
             roomObjA.transform.SetParent(root.transform);
+            // F1-04's own live test fixture: lets the lantern's reveal be checked by hand
+            // (point + hold focus at it) without needing a throwaway Play-mode-only object.
+            CreatePastLayerTestProp(roomObjA.transform, new Vector2(RoomWidth / 2f + 2f, 1.3f));
             var doorConditional = CreateConnectionZoneAt(roomObjA.transform, "Door_Conditional", new Vector2(RoomWidth - 0.5f, 1.3f));
             doorConditional.Configure(
                 RoomConnectionType.Door,
@@ -385,6 +388,54 @@ namespace Aurora.Editor
             renderer.sprite = GetOrCreateWhiteSprite();
             renderer.color = new Color(color.r, color.g, color.b, alpha);
             renderer.sortingOrder = -10;
+        }
+
+        private const string RevealMaterialPath = "Assets/_Project/Art/Materials/M_RevealPast.mat";
+        private static readonly Color PastLayerPresentColor = new(0.35f, 0.33f, 0.3f); // dull, ordinary
+        private static readonly Color PastLayerPastColor = new(0.624f, 0.769f, 0.780f); // --aurora-ghost
+
+        /// <summary>
+        /// F1-04's own visible test object: point the lantern at it and hold focus — present
+        /// (dull grey) swaps to past (ghost-blue) inside the cone. Needs M_RevealPast to
+        /// already exist (it's authored content, not generated here); logs and skips the
+        /// material if it's missing rather than failing the whole build.
+        /// </summary>
+        private static void CreatePastLayerTestProp(Transform roomParent, Vector2 localPosition)
+        {
+            var go = new GameObject("PastLayerTest");
+            go.transform.SetParent(roomParent);
+            go.transform.localPosition = localPosition;
+            go.transform.localScale = new Vector3(1.2f, 1.6f, 1f);
+
+            var renderer = go.AddComponent<SpriteRenderer>();
+            renderer.sprite = GetOrCreateWhiteSprite();
+
+            var material = AssetDatabase.LoadAssetAtPath<Material>(RevealMaterialPath);
+            if (material == null)
+            {
+                Debug.LogError($"[RoomPlaygroundBuilder] '{RevealMaterialPath}' not found — PastLayerTest will render as a plain white square until it exists.");
+            }
+            else
+            {
+                renderer.sharedMaterial = material;
+            }
+
+            var pastLayer = go.AddComponent<PastLayerObject>();
+            var so = new SerializedObject(pastLayer);
+            so.FindProperty("_presentTexture").objectReferenceValue = GetOrCreateSolidTexture("PastLayerTest_Present", PastLayerPresentColor);
+            so.FindProperty("_pastTexture").objectReferenceValue = GetOrCreateSolidTexture("PastLayerTest_Past", PastLayerPastColor);
+            so.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        private static Texture2D GetOrCreateSolidTexture(string name, Color color)
+        {
+            var texture = new Texture2D(4, 4, TextureFormat.RGBA32, false) { name = name };
+            var pixels = new Color[16];
+            for (var i = 0; i < 16; i++)
+                pixels[i] = color;
+            texture.SetPixels(pixels);
+            texture.Apply();
+            return texture;
         }
 
         private static Sprite? _whiteSprite;

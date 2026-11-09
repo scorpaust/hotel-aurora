@@ -61,6 +61,7 @@ namespace Aurora.Gameplay
         private float _focusBlend;
         private Vector2? _lastMouseScreenPos;
         private float _mouseIdleTimer;
+        private Vector3 _visualBaseScale = Vector3.one;
 
         /// <summary>True while the past-layer reveal is actually active (on, focused, not overheated).</summary>
         public bool IsRevealing { get; private set; }
@@ -84,6 +85,9 @@ namespace Aurora.Gameplay
             // the net scale cancels out — so the pivot now has no ancestor to inherit from at
             // all, and Update() positions/rotates it in world space by hand every frame.
             _pivot.SetParent(null, true);
+
+            if (_visual != null)
+                _visualBaseScale = _visual.transform.localScale;
         }
 
         private void Update()
@@ -104,8 +108,9 @@ namespace Aurora.Gameplay
             // Position before aiming: ComputeAimDirection's mouse-to-world conversion reads
             // _pivot.position, so it needs this frame's position, not last frame's.
             UpdatePivotPosition();
-            var direction = ComputeAimDirection();
+            var direction = ComputeAimDirection(out var deviationDegrees);
             ApplyLight(direction, overheated);
+            ApplyVisual(deviationDegrees);
 
             IsRevealing = _isOn && !overheated && _focusBlend > 0.01f;
 
@@ -114,9 +119,16 @@ namespace Aurora.Gameplay
             Cone = new LanternCone(_pivot.position, direction, halfAngle, range);
         }
 
-        private Vector2 ComputeAimDirection()
+        /// <summary>
+        /// World-space aim direction. deviationDegrees is the signed offset from the facing
+        /// direction that produced it (0 at rest), in the character's own forward-relative
+        /// sense — ApplyVisual uses it instead of re-deriving an angle from the world direction,
+        /// so it never has to untangle which world rotation came from which facing side.
+        /// </summary>
+        private Vector2 ComputeAimDirection(out float deviationDegrees)
         {
             var facing = _player.FacingRight ? Vector2.right : Vector2.left;
+            deviationDegrees = 0f;
             if (_input == null)
                 return facing;
 
@@ -148,19 +160,28 @@ namespace Aurora.Gameplay
 
             var signedAngle = Vector2.SignedAngle(facing, desired);
             var clamped = Mathf.Clamp(signedAngle, -_aimClampDegrees, _aimClampDegrees);
+            deviationDegrees = _player.FacingRight ? clamped : -clamped;
             return RotateDegrees(facing, clamped);
         }
 
         /// <summary>
         /// True once the mouse has sat within _mouseIdleThresholdPixels of its last reading for
-        /// _mouseIdleTimeout seconds straight — covers both a genuinely still cursor and one
-        /// that's left the game view entirely, which reads as a fixed (0,0) (confirmed live:
-        /// LanternAim.ReadValue stays pinned at the screen origin whenever the OS cursor isn't
-        /// over the Game View), which previously made the lantern clamp hard toward that corner
-        /// instead of resting on the facing direction.
+        /// _mouseIdleTimeout seconds straight — covers a genuinely still cursor. A reading at
+        /// the screen origin is treated as idle immediately instead of waiting out that timer:
+        /// it's the Input System's de-facto sentinel for "no real position" whenever the OS
+        /// cursor isn't over the Game View (confirmed live: LanternAim.ReadValue pins to exactly
+        /// (0,0) in that case) — waiting out the full timeout left the beam clamped toward that
+        /// screen corner for a whole extra second (reported: "aponta sempre para baixo").
         /// </summary>
         private bool IsMouseIdle(Vector2 rawScreenPos)
         {
+            if (rawScreenPos.sqrMagnitude < 1f)
+            {
+                _lastMouseScreenPos = rawScreenPos;
+                _mouseIdleTimer = _mouseIdleTimeout;
+                return true;
+            }
+
             if (_lastMouseScreenPos is { } last && (rawScreenPos - last).sqrMagnitude <= _mouseIdleThresholdPixels * _mouseIdleThresholdPixels)
             {
                 _mouseIdleTimer += Time.deltaTime;
@@ -204,12 +225,6 @@ namespace Aurora.Gameplay
             var angleDeg = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
             _pivot.rotation = Quaternion.Euler(0f, 0f, angleDeg + _lightForwardOffsetDegrees);
 
-            // The physical lantern itself (if one is assigned) stays visible and turns with
-            // the aim whenever it's on — even overheated, Tomás is still holding it, just not
-            // getting light out of it.
-            if (_visual != null)
-                _visual.enabled = _isOn;
-
             if (!_isOn)
             {
                 _light.enabled = false;
@@ -235,6 +250,34 @@ namespace Aurora.Gameplay
             _light.pointLightOuterRadius = Mathf.Lerp(_normalRange, _focusRange, _focusBlend);
             _light.intensity = Mathf.Lerp(_normalIntensity, _focusIntensity, _focusBlend);
             _light.color = Color.Lerp(_normalColor, _focusColor, _focusBlend);
+        }
+
+        /// <summary>
+        /// Rotates/mirrors the handheld prop independently of the Light2D's own world rotation
+        /// (_pivot.rotation, set in ApplyLight). The two can't share one rotation: the sprite's
+        /// own pivot sits near the grip with the lantern's body hanging below and to one side
+        /// (confirmed via Sprite.bounds — not centered on the pivot), so the pivot's -90°
+        /// (facing right) vs +90° (facing left) rest rotations aren't mirror images of each
+        /// other for an off-center shape — one swings the body down, the other up (reported:
+        /// visibly lower when facing right). Driving the visual from deviationDegrees (always
+        /// expressed in the character's own forward-relative sense) plus a localScale.x flip
+        /// instead reproduces the same shape on both sides, just mirrored, like a normal 2D
+        /// character flip.
+        /// </summary>
+        private void ApplyVisual(float deviationDegrees)
+        {
+            if (_visual == null)
+                return;
+
+            _visual.enabled = _isOn;
+
+            var mirrored = RotateDegrees(Vector2.right, deviationDegrees);
+            var visualAngleDeg = Mathf.Atan2(mirrored.y, mirrored.x) * Mathf.Rad2Deg - 90f;
+            _visual.transform.rotation = Quaternion.Euler(0f, 0f, visualAngleDeg + _lightForwardOffsetDegrees);
+
+            var scale = _visualBaseScale;
+            scale.x = Mathf.Abs(scale.x) * (_player.FacingRight ? 1f : -1f);
+            _visual.transform.localScale = scale;
         }
     }
 }

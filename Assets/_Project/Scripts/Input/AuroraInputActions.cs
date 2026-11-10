@@ -165,6 +165,16 @@ namespace Aurora.Input
                     ""priority"": 0
                 },
                 {
+                    ""name"": ""LanternAim"",
+                    ""type"": ""Value"",
+                    ""id"": ""d8e4a2b1-5c3f-4a9e-8b7d-1f6c3e9a2b4d"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true,
+                    ""priority"": 0
+                },
+                {
                     ""name"": ""UseTool"",
                     ""type"": ""Button"",
                     ""id"": ""f3820f7c-797e-4189-ab39-2d6d1bb969c2"",
@@ -478,6 +488,28 @@ namespace Aurora.Input
                     ""processors"": """",
                     ""groups"": ""Gamepad"",
                     ""action"": ""LanternFocus"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f1a3c5e7-9b2d-4f6a-8c1e-3d5b7f9a1c2e"",
+                    ""path"": ""<Mouse>/delta"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KeyboardMouse"",
+                    ""action"": ""LanternAim"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a2b4d6f8-1c3e-5a7b-9d2f-4e6c8a1b3d5f"",
+                    ""path"": ""<Gamepad>/rightStick"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""LanternAim"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -1301,6 +1333,7 @@ namespace Aurora.Input
             m_Gameplay_InteractHold = m_Gameplay.FindAction("InteractHold", throwIfNotFound: true);
             m_Gameplay_Lantern = m_Gameplay.FindAction("Lantern", throwIfNotFound: true);
             m_Gameplay_LanternFocus = m_Gameplay.FindAction("LanternFocus", throwIfNotFound: true);
+            m_Gameplay_LanternAim = m_Gameplay.FindAction("LanternAim", throwIfNotFound: true);
             m_Gameplay_UseTool = m_Gameplay.FindAction("UseTool", throwIfNotFound: true);
             m_Gameplay_CycleTool = m_Gameplay.FindAction("CycleTool", throwIfNotFound: true);
             m_Gameplay_CallBeatriz = m_Gameplay.FindAction("CallBeatriz", throwIfNotFound: true);
@@ -1417,6 +1450,7 @@ namespace Aurora.Input
         private readonly InputAction m_Gameplay_InteractHold;
         private readonly InputAction m_Gameplay_Lantern;
         private readonly InputAction m_Gameplay_LanternFocus;
+        private readonly InputAction m_Gameplay_LanternAim;
         private readonly InputAction m_Gameplay_UseTool;
         private readonly InputAction m_Gameplay_CycleTool;
         private readonly InputAction m_Gameplay_CallBeatriz;
@@ -1460,6 +1494,10 @@ namespace Aurora.Input
             /// Provides access to the underlying input action "Gameplay/LanternFocus".
             /// </summary>
             public InputAction @LanternFocus => m_Wrapper.m_Gameplay_LanternFocus;
+            /// <summary>
+            /// Provides access to the underlying input action "Gameplay/LanternAim".
+            /// </summary>
+            public InputAction @LanternAim => m_Wrapper.m_Gameplay_LanternAim;
             /// <summary>
             /// Provides access to the underlying input action "Gameplay/UseTool".
             /// </summary>
@@ -1523,6 +1561,9 @@ namespace Aurora.Input
                 @LanternFocus.started += instance.OnLanternFocus;
                 @LanternFocus.performed += instance.OnLanternFocus;
                 @LanternFocus.canceled += instance.OnLanternFocus;
+                @LanternAim.started += instance.OnLanternAim;
+                @LanternAim.performed += instance.OnLanternAim;
+                @LanternAim.canceled += instance.OnLanternAim;
                 @UseTool.started += instance.OnUseTool;
                 @UseTool.performed += instance.OnUseTool;
                 @UseTool.canceled += instance.OnUseTool;
@@ -1567,6 +1608,9 @@ namespace Aurora.Input
                 @LanternFocus.started -= instance.OnLanternFocus;
                 @LanternFocus.performed -= instance.OnLanternFocus;
                 @LanternFocus.canceled -= instance.OnLanternFocus;
+                @LanternAim.started -= instance.OnLanternAim;
+                @LanternAim.performed -= instance.OnLanternAim;
+                @LanternAim.canceled -= instance.OnLanternAim;
                 @UseTool.started -= instance.OnUseTool;
                 @UseTool.performed -= instance.OnUseTool;
                 @UseTool.canceled -= instance.OnUseTool;
@@ -2125,6 +2169,13 @@ namespace Aurora.Input
             /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
             /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
             void OnLanternFocus(InputAction.CallbackContext context);
+            /// <summary>
+            /// Method invoked when associated input action "LanternAim" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+            /// </summary>
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+            void OnLanternAim(InputAction.CallbackContext context);
             /// <summary>
             /// Method invoked when associated input action "UseTool" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
             /// </summary>

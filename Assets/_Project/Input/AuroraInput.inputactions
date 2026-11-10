@@ -77,6 +77,16 @@
                     "priority": 0
                 },
                 {
+                    "name": "LanternAim",
+                    "type": "Value",
+                    "id": "d8e4a2b1-5c3f-4a9e-8b7d-1f6c3e9a2b4d",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true,
+                    "priority": 0
+                },
+                {
                     "name": "UseTool",
                     "type": "Button",
                     "id": "f3820f7c-797e-4189-ab39-2d6d1bb969c2",
@@ -390,6 +400,28 @@
                     "processors": "",
                     "groups": "Gamepad",
                     "action": "LanternFocus",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f1a3c5e7-9b2d-4f6a-8c1e-3d5b7f9a1c2e",
+                    "path": "<Mouse>/delta",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KeyboardMouse",
+                    "action": "LanternAim",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a2b4d6f8-1c3e-5a7b-9d2f-4e6c8a1b3d5f",
+                    "path": "<Gamepad>/rightStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "LanternAim",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

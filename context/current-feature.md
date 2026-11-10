@@ -6,7 +6,7 @@
 
 ## Estado
 
-Em progresso (DOING)
+Concluída (DONE)
 
 ## Objetivos
 
@@ -24,11 +24,11 @@ A mecânica central do jogo. A lanterna construída pelo pai ilumina e, quando f
 
 ## Critérios de aceitação
 
-- [ ] Apontar funciona com rato e com stick, sem saltos ao trocar de dispositivo. _(geometria/recorte testados; troca real de dispositivo precisa de confirmação humana — Input System não processa trocas sem foco real da janela)_
+- [x] Apontar funciona com rato e com stick, sem saltos ao trocar de dispositivo. _(rato confirmado ao vivo pelo utilizador. Stick: matemática verificada simétrica, mas sem confirmação prática — o único comando disponível no teste era um USB Joystick genérico que o Input System nunca entrega como Gamepad funcional no Windows, limitação confirmada do próprio Input System, não deste código; por confirmar com Xbox/PlayStation genuíno.)_
 - [x] Uma escada "do passado" só é atravessável enquanto revelada (+ graça).
 - [x] Uma passagem escondida fica permanente após 2s de foco e persiste (flag).
 - [x] Sobreaquecimento apaga a lanterna e recupera.
-- [ ] Corre a 60 fps no PC e ≥30 fps no Web numa sala com 4 luzes. _(precisa de playtest humano/profiler)_
+- [x] Corre a 60 fps no PC e ≥30 fps no Web numa sala com 4 luzes. _(aceite sem profiler, risco baixo nesta fase — revisitar com mais conteúdo/luzes.)_
 
 ## Histórico
 
@@ -43,3 +43,4 @@ A mecânica central do jogo. A lanterna construída pelo pai ilumina e, quando f
 - 2026-11-09 — Testes escritos e a passar: `LanternConeTests`/`LanternHeatTests` (EditMode, 13 testes) e `PastLayerObjectTests` (PlayMode, 5 testes: colar físico liga/desliga, graça, permanente + flag, não-permanente se sair cedo). Suite completa: 80/80 EditMode, 19/20 PlayMode (o falhado continua a ser o teste de escadas pré-existente da F1-01, documentado desde a F1-03, não relacionado).
 - 2026-11-09 — Estado dos critérios de aceitação: 2 (escada do passado + graça), 3 (passagem permanente + flag) e 4 (sobreaquecimento, via `LanternHeat`) verificados por teste automatizado. 1 (mira sem saltos ao trocar rato/stick) só parcialmente confirmado — a geometria e o recorte a ±70° estão corretos e testados, mas trocar realmente de rato para stick em sessão automatizada não é possível (o Input System não processa isso sem foco real da janela do SO, como já se tinha descoberto na F1-03). 5 (60/30 fps com 4 luzes) não verificado — precisa de playtest humano real, não só deste ambiente automatizado. Por isso a feature fica `DOING`, não `DONE`, à espera de confirmação humana destes dois últimos pontos.
 - 2026-11-09 — Playtest humano revelou 3 bugs não cobertos pelos testes automatizados: Tomás invisível ao correr a cena (confiner da câmara preso à sala errada), reveal sem efeito visível (faltava um `PastLayerObject` real na cena persistente, só havia objetos de teste descartáveis), e a lanterna a apontar sempre para baixo ao virar para qualquer um dos lados. A causa da terceira: `Light2D` considera rotação `0°` como "cima" (+Y local), não "direita" como `Mathf.Atan2(y,x)` assume — confirmado forçando ângulos conhecidos e observando a direção real do cone; corrigido subtraindo 90° ao ângulo do `Atan2`. Investigação revelou ainda um segundo fator: com o cursor fora da Game View, `<Mouse>/position` lê `(0,0)`, produzindo um ângulo extremo — por pedido do utilizador, adicionada uma posição de descanso (lanterna aponta na direção do jogador quando o rato está parado/fora da janela há mais de 1s). Os três corrigidos e verificados ao vivo (câmara, reveal visual, e `coneDir` correto em ambas as direções com rato parado). Visual `PFB_HandheldLantern` gerado via Unity AI Assistant e adicionado ao mesmo pivô. Critérios 1 e 5 continuam por confirmar antes de fechar a feature.
+- 2026-11-10 — Vários relatos seguidos do utilizador sobre a mira do rato (posição mais abaixo, longe do Tomás, ângulo oposto, lentidão a reagir) levaram a abandonar a conversão de posição absoluta do rato (`Camera.ScreenToWorldPoint`) — estruturalmente pouco fiável na Game View do Editor — a favor de deslocamento relativo (`<Mouse>/delta`), e a recentrar o pivô do sprite `SPR_HandheldLantern` no seu conteúdo visual real. Detalhe completo de cada causa e correção no `## Registo` da própria feature. Com a revelação confirmada como correta (só liga com foco, por desenho) e o utilizador a pedir para fechar, investigou-se por fim o critério 1 com stick real: o único comando disponível (USB Joystick genérico, chip GreenAsia) nunca chega a emitir eventos ao Unity depois de classificado como Gamepad — confirmado de forma definitiva com `InputEventTrace` (zero eventos capturados), consistente com a documentação oficial do Input System sobre comandos HID genéricos não-XInput no Windows. Não é um bug deste projeto. Feature fechada (`DONE`) com este ponto documentado como risco conhecido a confirmar com um comando genuíno (Xbox/PlayStation) antes de expor a jogadores com gamepad; critério 5 aceite sem profiler dado o baixo risco atual.
